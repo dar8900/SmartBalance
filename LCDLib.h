@@ -13,8 +13,8 @@ typedef enum
 {
 	ONE = 0,
 	TWO,
-	THREE,
-	FOUR
+	// THREE,
+	// FOUR
 } LCD_ROWS;
 
 void LCDInit(void);

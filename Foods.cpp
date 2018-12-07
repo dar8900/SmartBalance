@@ -1,6 +1,8 @@
 #include"Foods.h"
 
+#undef ERASE_ALL
 
+#ifndef ERASE_ALL
 const NUTRITIONAL_VALUES NutritionalTableFruits[] = 
 {
 	{"Mela"							,52},
@@ -16,20 +18,20 @@ const NUTRITIONAL_VALUES NutritionalTableFruits[] =
 	{"Fico"							,107},
 	{"Pompelmo"						,50},
 	{"Melograno"					,74},
-	{"Rosa canina"					,162},
+	// {"Rosa canina"					,162},
 	{"Melone"						,54},
 	{"Lamponi"						,36},
 	{"Zenzero"						,80},
 	{"Kiwi"							,51},
 	{"Ciliegie"						,50},
-	{"Litchi"						,66},
+	// {"Litchi"						,66},
 	{"Mandarino"					,50},
 	{"Mango"						,62},
-	{"Maracuja"						,97},
+	// {"Maracuja"						,97},
 	{"Prugna"						,47},
 	{"Pesca"						,41},
-	{"Mela cotogna"					,38},
-	{"Rabarbaro"					,21},
+	// {"Mela cotogna"					,38},
+	// {"Rabarbaro"					,21},
 	{"Anguria"						,30},
 	{"Uva"							,70},
 	{"Limone"						,35},
@@ -92,15 +94,16 @@ const NUTRITIONAL_VALUES NutritionalTableMeat[] =
 	{"Maiale, magro"				,143},
 	{"Cotoletta maiale"				,105},
 	{"Würstel"						,375},
+	{"Ragu"						    ,150},
 	
 };
 const NUTRITIONAL_VALUES NutritionalTableFish[] = 
 {
 	{"Trota"						,50},
-	{"Luccio"						,50},
+	// {"Luccio"						,50},
 	{"Aringa"						,146},
 	{"Salmone"						,137},
-	{"Filetto scorfano"				,111},
+	// {"Filetto scorfano"				,111},
 	{"Filetto merluzzo"				,83},
 	{"Tonno"						,144},
 	
@@ -121,7 +124,7 @@ const NUTRITIONAL_VALUES NutritionalTableCheese[] =
 	{"Panna"					,204},
 	{"Panna da cucina"			,162},
 	{"Panna acida"				,115},
-	{"Smetana"					,240},
+	// {"Smetana"					,240},
 	
 };
 const NUTRITIONAL_VALUES NutritionalTablePasta[] = 
@@ -144,6 +147,7 @@ const NUTRITIONAL_VALUES NutritionalTableBread[] =
 	{"Croissant"			,393},
 	{"Pane naan"			,290},
 	{"Pita"					,290},
+	{"Integrale"			,247},
 	{"Dolce segale"			,181},
 	{"Toast integrale"		,244},	
 	{"Wrap integrale"		,170},
@@ -168,16 +172,16 @@ const NUTRITIONAL_VALUES NutritionalTableJunkFood[] =
 
 const NUTRITIONAL_CATEGORIES CategoryTable[] = 
 {
-	{"Verdura"  		,NutritionalTableVegetables},
-	{"Frutta" 			,NutritionalTableFruits},
-	{"Carne" 			,NutritionalTableMeat},
-	{"Pesce" 			,NutritionalTableFish},
-	{"Latticini/uova" 	,NutritionalTableCheese},
-	{"Pasta" 			,NutritionalTablePasta},
-	{"Pane e co." 		,NutritionalTableBread},
-	{"Cheat meal" 		,NutritionalTableJunkFood},
+	{"Verdura"  		,NutritionalTableVegetables, (sizeof(NutritionalTableVegetables)/sizeof(NUTRITIONAL_VALUES))},
+	{"Frutta" 			,NutritionalTableFruits,     (sizeof(NutritionalTableFruits)/sizeof(NUTRITIONAL_VALUES))},
+	{"Carne" 			,NutritionalTableMeat,       (sizeof(NutritionalTableMeat)/sizeof(NUTRITIONAL_VALUES))},
+	{"Pesce" 			,NutritionalTableFish, 	     (sizeof(NutritionalTableFish)/sizeof(NUTRITIONAL_VALUES))},
+	{"Latticini/uova" 	,NutritionalTableCheese,	 (sizeof(NutritionalTableCheese)/sizeof(NUTRITIONAL_VALUES))},
+	{"Pasta" 			,NutritionalTablePasta, 	 (sizeof(NutritionalTablePasta)/sizeof(NUTRITIONAL_VALUES))},
+	{"Pane e co." 		,NutritionalTableBread, 	 (sizeof(NutritionalTableBread)/sizeof(NUTRITIONAL_VALUES))},
+	{"Cheat meal" 		,NutritionalTableJunkFood,   (sizeof(NutritionalTableJunkFood)/sizeof(NUTRITIONAL_VALUES))},
 };
-
+#endif
 
 
 

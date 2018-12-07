@@ -3,5 +3,10 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+extern uint8_t  CategoryChoice;
+extern uint8_t  FoodChoice;
+
+
+bool FoodChoiceMenu(void); 
 
 #endif

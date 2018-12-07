@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 
-#define HX711_CLK   2
+#define HX711_CLK   1
 #define HX711_DOUT  3
 
 
