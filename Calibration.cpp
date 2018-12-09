@@ -2,8 +2,6 @@
  Setup your scale and start the sketch WITHOUT a weight on the scale
  Once readings are displayed place the weight on the scale
  Press +/- or a/z to adjust the calibration_factor until the output readings match the known weight
- Arduino pin 6 -> HX711 CLK
- Arduino pin 5 -> HX711 DOUT
  Arduino pin 5V -> HX711 VCC
  Arduino pin GND -> HX711 GND 
 */
@@ -13,11 +11,11 @@
 #include "HX711.h"
 #include <EEPROM.h>
 #include "EepromAddr.h"
+#include "LCDLib.h"
+#include "Keyboard.h"
 
+	
 
-#define CALIBRATION_PROCEDURE	
-
-#define WEIGHT_TEST 	100
  
 HX711 scale(HX711_CLK, HX711_DOUT);
 
@@ -32,42 +30,46 @@ void FirstCalibration()
 {
 	scale.set_scale();
 	scale.tare(); //Reset the scale to 0
-
+	String ValueUnit;
 	long zero_factor = scale.read_average();
-	
-	while(1)
+	uint8_t ButtonPress = NO_PRESS;
+	bool ExitCalibration = false;
+	while(!ExitCalibration)
 	{
 		scale.set_scale(calibration_factor); //Adjust to this calibration factor
-
-		Serial.print("Reading: ");
-		Serial.print(scale.get_units(10), 3);
-		Serial.print(" kg"); //Change this to kg and re-adjust the calibration factor if you follow SI units like a sane person
-		Serial.print(" calibration_factor: ");
-		Serial.print(calibration_factor);
-		Serial.println();
-		if(Serial.available())
+		LCDPrintString(ONE, LEFT_ALIGN, "Units:");
+		ValueUnit = String(scale.get_units(10), 3) + "kg";
+		LCDPrintString(ONE, RIGHT_ALIGN, ValueUnit);
+		LCDPrintString(TWO, LEFT_ALIGN, "Cal fact:");
+		LCDPrintString(TWO, RIGHT_ALIGN, String(calibration_factor, 4));
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
 		{
-			char temp = Serial.read();
-			if(temp == '+')
-				calibration_factor += 1;
-			else if(temp == '-')
-				calibration_factor -= 1;
-			else if(temp == 'w')
-				calibration_factor += 10;
-			else if(temp == 's')
-				calibration_factor -= 10;
-			else if(temp == 'o')
-			{
+			case UP:
+				calibration_factor -=1;
+				ClearLCD();
+				break;
+			case DOWN:
+				calibration_factor +=1;
+				ClearLCD();
+				break;
+			case OK_TARE:
+				calibration_factor +=10;
+				ClearLCD();				
+				break;
+			case EXIT:
+				ExitCalibration = true;
 				EEPROM.put(CALIBRATION_ADDR, calibration_factor);
+				EEPROM.commit();
 				break;
-			}
-			else if(temp == 'e')
-				break;
+			default:
+				break;		
 		}
+		delay(50);
 	}
 }
-#endif // CALIBRATION_PROCEDURE
 
+#else
 
 void BalanceSetup()
 {
@@ -90,3 +92,4 @@ void SetTare()
 	scale.tare(5);
 }
 
+#endif // CALIBRATION_PROCEDURE

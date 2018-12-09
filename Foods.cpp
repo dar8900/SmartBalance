@@ -1,8 +1,5 @@
 #include"Foods.h"
 
-#undef ERASE_ALL
-
-#ifndef ERASE_ALL
 const NUTRITIONAL_VALUES NutritionalTableFruits[] = 
 {
 	{"Mela"							,52},
@@ -181,7 +178,13 @@ const NUTRITIONAL_CATEGORIES CategoryTable[] =
 	{"Pane e co." 		,NutritionalTableBread, 	 (sizeof(NutritionalTableBread)/sizeof(NUTRITIONAL_VALUES))},
 	{"Cheat meal" 		,NutritionalTableJunkFood,   (sizeof(NutritionalTableJunkFood)/sizeof(NUTRITIONAL_VALUES))},
 };
-#endif
+
+uint16_t CalcCalories(float Weight, uint8_t Category, uint8_t Food)
+{
+	uint16_t CaloriesCalculated = 0, Calories100g = CategoryTable[Category].NutritionalTable[Food].Calories;
+	CaloriesCalculated = (uint16_t)((Weight * (float)Calories100g) / 0.100);
+	return CaloriesCalculated;
+}
 
 
 

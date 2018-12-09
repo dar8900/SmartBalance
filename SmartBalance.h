@@ -5,10 +5,10 @@
 
 typedef enum
 {
-	UP_PIN = 4,
-	DOWN_PIN,
-	OK_TARE_PIN,
-	EXIT_PIN
+	UP_PIN = 12,    // 12
+	DOWN_PIN,       // 13
+	OK_TARE_PIN,    // 14
+	EXIT_PIN        // 15
 }PINS;
 
 #endif

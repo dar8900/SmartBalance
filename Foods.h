@@ -33,5 +33,5 @@ enum
 
 
 extern const NUTRITIONAL_CATEGORIES CategoryTable[];
-
+uint16_t CalcCalories(float Weight, uint8_t Category, uint8_t Food);
 #endif

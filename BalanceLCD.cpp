@@ -2,6 +2,7 @@
 #include "LCDLib.h"
 #include "Keyboard.h"
 #include "Foods.h"
+#include "Calibration.h"
 
 uint8_t  CategoryChoice;
 uint8_t  FoodChoice;
@@ -16,7 +17,7 @@ bool FoodChoiceMenu()
 	ClearLCD();
 	while(!Exit)
 	{
-		if(Food)
+		if(IsFood)
 		{
 			LCDPrintString(ONE, CENTER_ALIGN, "Categoria: ");
 			LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].NutritionalTable[Food].FoodName);
@@ -86,13 +87,45 @@ bool FoodChoiceMenu()
 			default:
 				break;
 		}
-		delay(50);
+		delay(100);
 	}
 	return ChoiceComplete;
 }
 
 void ShowMeasure()
 {
-	
+	uint8_t ButtonPress = NO_PRESS;
+	float Weight = 0.0;
+	uint16_t Calories = 0;
+	bool ExitShowMeasure = false;
+	String WeightStr, CaloriesStr;
+	ClearLCD();
+	while(!ExitShowMeasure)
+	{
+		LCDPrintString(ONE, CENTER_ALIGN, CategoryTable[CategoryChoice].NutritionalTable[FoodChoice].FoodName);
+		Weight = GetWeight();
+		Calories = CalcCalories(Weight, CategoryChoice, FoodChoice);
+		WeightStr = String(Weight, 4) + "kg";
+		CaloriesStr = String(Calories) + "kcal";
+		LCDPrintString(TWO, LEFT_ALIGN, WeightStr);
+		LCDPrintString(TWO, RIGHT_ALIGN, CaloriesStr);
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
+		{
+			case EXIT:
+				ExitShowMeasure = true;
+				break;
+			case UP:
+			case DOWN:
+				break;
+			case OK_TARE:
+				SetTare();
+				ClearLCDLine(TWO);
+				break;
+			default:
+				break;
+		}
+		delay(50);
+	}
 	
 }

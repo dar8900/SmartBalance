@@ -6,6 +6,7 @@
 #define HX711_CLK   1
 #define HX711_DOUT  3
 
+#undef CALIBRATION_PROCEDURE
 
 void FirstCalibration(void);
 

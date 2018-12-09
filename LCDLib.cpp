@@ -108,7 +108,7 @@ void LCDPrintValue(short row, short col, short value)
 void ClearLCDLine(short row)
 {
   lcd_main.setCursor(0, row);
-  lcd_main.print("                    ");
+  lcd_main.print("                ");
 }
 
 void LCDDisplayLight(bool IsOn)
