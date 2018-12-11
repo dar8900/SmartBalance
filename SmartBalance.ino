@@ -26,6 +26,7 @@ void setup()
 	LCDCreateIcon(DownArrow, DOWN_ARROW);
 #ifndef CALIBRATION_PROCEDURE
 	BalanceSetup();
+	FillNutritionalTableSizeArray();
 #else
 	FirstCalibration()
 #endif

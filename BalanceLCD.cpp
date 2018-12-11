@@ -45,7 +45,7 @@ bool FoodChoiceMenu()
 		{
 			LCDPrintString(ONE, CENTER_ALIGN, String(CategoryTable[Category].CategoryName));
 			LCDPrintString(TWO, CENTER_ALIGN, String(CategoryTable[Category].NutritionalTable[Food].FoodName));
-			FoodMaxItem = CategoryTable[Category].TableSize;
+			FoodMaxItem = *CategoryTable[Category].TableSizeArray;
 		}
 		if(IsCategory)
 		{

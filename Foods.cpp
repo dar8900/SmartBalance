@@ -1,5 +1,7 @@
 #include"Foods.h"
 
+uint8_t NutritionalTableSizes[MAX_CATEGORIES];
+
 
 /*
 //////////////////////////////////////////////////////////////////////////////////////
@@ -806,18 +808,29 @@ const NUTRITIONAL_VALUES NutritionalTableAlcol[] PROGMEM =
 
 const NUTRITIONAL_CATEGORIES CategoryTable[] = 
 {
-	{"Verdura"  		,NutritionalTableVegetables,     MAX_FRUITS_CATEGORIES    },
-	{"Frutta" 			,NutritionalTableFruits    ,     MAX_VEGETABLES_CATEGORIES},
-	{"Carne" 			,NutritionalTableMeat      ,     MAX_MEAT_CATEGORIES      },
-	{"Pesce" 			,NutritionalTableFish      , 	 MAX_FISH_CATEGORIES	  },
-	{"Latticini/uova" 	,NutritionalTableCheese    ,	 MAX_CHEESE_CATEGORIES	  },
-	{"Pasta" 			,NutritionalTablePasta     , 	 MAX_PASTA_CATEGORIES	  },
-	{"Pane e co." 		,NutritionalTableBread     , 	 MAX_BREAD_CATEGORIES 	  },
-	{"Alcolici" 		,NutritionalTableAlcol     ,     MAX_JUNK_CATEGORIES	  },
-	{"Alcolici" 		,NutritionalTableAlcol     ,     MAX_JUNK_CATEGORIES	  },
-	{"Alcolici" 		,NutritionalTableAlcol     ,     MAX_JUNK_CATEGORIES	  },
-	{"Alcolici" 		,NutritionalTableAlcol     ,     MAX_JUNK_CATEGORIES	  },
+	{"Verdura"  		,NutritionalTableVegetables,     &NutritionalTableSizes[0]},
+	{"Frutta" 			,NutritionalTableFruits    ,     &NutritionalTableSizes[1]},
+	{"Pesce" 			,NutritionalTableFish      , 	 &NutritionalTableSizes[2]},
+	{"Latticini" 	    ,NutritionalTableCheese    ,	 &NutritionalTableSizes[3]},
+	{"Pasta" 			,NutritionalTablePasta     , 	 &NutritionalTableSizes[4]},
+	{"Pane e co." 		,NutritionalTableBread     , 	 &NutritionalTableSizes[5]},
+	{"Manzo"     		,NutritionalTableCow       ,     &NutritionalTableSizes[6]},
+	{"Maiale" 			,NutritionalTablePork      ,     &NutritionalTableSizes[7]},
+	{"Pollame" 	   		,NutritionalTableChiken    ,     &NutritionalTableSizes[8]},
+	{"Uova" 		 	,NutritionalTableEggs      ,     &NutritionalTableSizes[9]},
+	{"Alcolici" 		,NutritionalTableAlcol     ,     &NutritionalTableSizes[10]},
 };
+
+
+void FillNutritionalTableSizeArray()
+{
+	uint8_t TableIndx = 0;
+	for(TableIndx = 0; TableIndx < MAX_CATEGORIES; TableIndx++)
+	{		
+		NutritionalTableSizes[TableIndx] = (sizeof(CategoryTable[TableIndx].NutritionalTable)/sizeof(NUTRITIONAL_VALUES));
+	}	
+}
+
 
 static uint16_t CalcCalories(float Weight, uint8_t Category, uint8_t Food)
 {
