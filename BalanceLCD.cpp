@@ -7,6 +7,30 @@
 uint8_t  CategoryChoice;
 uint8_t  FoodChoice;
 
+short UpArrow[] = 
+{
+	0x04,
+	0x0E,
+	0x1F,
+	0x04,
+	0x04,
+	0x04,
+	0x04,
+	0x04,
+};
+
+short DownArrow[] = 
+{
+	0x04,
+	0x04,
+	0x04,
+	0x04,
+	0x04,
+	0x1F,
+	0x0E,
+	0x04,
+};
+
 // Prima la scelta della categoria, poi la scelta dell'alimento
 bool FoodChoiceMenu() 
 {
@@ -19,14 +43,14 @@ bool FoodChoiceMenu()
 	{
 		if(IsFood)
 		{
-			LCDPrintString(ONE, CENTER_ALIGN, "Categoria: ");
-			LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].NutritionalTable[Food].FoodName);
+			LCDPrintString(ONE, CENTER_ALIGN, String(CategoryTable[Category].CategoryName));
+			LCDPrintString(TWO, CENTER_ALIGN, String(CategoryTable[Category].NutritionalTable[Food].FoodName));
 			FoodMaxItem = CategoryTable[Category].TableSize;
 		}
 		if(IsCategory)
 		{
-			LCDPrintString(ONE, CENTER_ALIGN, "Cibo: ");
-			LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].CategoryName);			
+			LCDPrintString(ONE, CENTER_ALIGN, "Categoria: ");
+			LCDPrintString(TWO, CENTER_ALIGN, String(CategoryTable[Category].CategoryName));			
 		}
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
@@ -95,20 +119,30 @@ bool FoodChoiceMenu()
 void ShowMeasure()
 {
 	uint8_t ButtonPress = NO_PRESS;
-	float Weight = 0.0;
+	float Weight = 0.0, OldWeight = 0.0;
 	uint16_t Calories = 0;
+	uint16_t Carbs = 0, Protein = 0, Fats = 0;
 	bool ExitShowMeasure = false;
-	String WeightStr, CaloriesStr;
+	String WeightStr, CaloriesStr, CarbsStr, ProtStr, FatsStr, FibersStr;
 	ClearLCD();
 	while(!ExitShowMeasure)
 	{
-		LCDPrintString(ONE, CENTER_ALIGN, CategoryTable[CategoryChoice].NutritionalTable[FoodChoice].FoodName);
+		LCDPrintString(ONE, CENTER_ALIGN, String(CategoryTable[CategoryChoice].NutritionalTable[FoodChoice].FoodName));
 		Weight = GetWeight();
-		Calories = CalcCalories(Weight, CategoryChoice, FoodChoice);
+		if(OldWeight != Weight)
+			ClearLCD();
+		CalcNutritionalValues(Weight, CategoryChoice, FoodChoice, &Calories, &Carbs, &Protein, &Fats);
 		WeightStr = String(Weight, 4) + "kg";
 		CaloriesStr = String(Calories) + "kcal";
+		CarbsStr = "C: " + String(Carbs)    + "g";
+		ProtStr = "P: " + String(Protein)  + "g";
+		FatsStr = "G: " + String(Fats)     + "g";
 		LCDPrintString(TWO, LEFT_ALIGN, WeightStr);
 		LCDPrintString(TWO, RIGHT_ALIGN, CaloriesStr);
+		LCDPrintString(THREE, LEFT_ALIGN, CarbsStr);
+		LCDPrintString(THREE, RIGHT_ALIGN, ProtStr);
+		LCDPrintString(FOUR, CENTER_ALIGN, FatsStr);
+		
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
 		{
@@ -120,12 +154,13 @@ void ShowMeasure()
 				break;
 			case OK_TARE:
 				SetTare();
-				ClearLCDLine(TWO);
+				ClearLCD();
 				break;
 			default:
 				break;
 		}
-		delay(50);
+		OldWeight = Weight;
+		delay(400);
 	}
 	
 }

@@ -2,7 +2,7 @@
 #include <LiquidCrystal_I2C.h> // Libreria LCD I2C
 #include <Wire.h>
 
-LiquidCrystal_I2C lcd_main(0x27, 16,2);
+LiquidCrystal_I2C lcd_main(LCD_ADDR, LCD_COL, LCD_ROW);
 
 void LCDInit()
 {
@@ -107,8 +107,11 @@ void LCDPrintValue(short row, short col, short value)
 
 void ClearLCDLine(short row)
 {
-  lcd_main.setCursor(0, row);
-  lcd_main.print("                ");
+  for(uint8_t Col = 0; Col < MAX_LCD_COL; Col++)
+  {
+	lcd_main.print(" ");
+	lcd_main.setCursor(Col, row);
+  }
 }
 
 void LCDDisplayLight(bool IsOn)
@@ -125,4 +128,24 @@ void LCDBlink(bool IsBlinking)
 		lcd_main.blink();
 	else
 		lcd_main.noBlink();
+}
+
+bool LCDCreateIcon(short Icon[], short IconNum)
+{
+	bool Created = false;
+	if(IconNum < 7)
+	{
+		lcd_main.createChar((uint8_t)IconNum, (uint8_t*)Icon);
+		Created = true;
+	}
+	else
+	{
+		Created = false;
+	}
+	return Created;
+}
+
+void LCDShowIcon(short IconNum)
+{
+	lcd_main.write(IconNum);
 }

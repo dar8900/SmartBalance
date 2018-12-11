@@ -9,6 +9,8 @@
 #define SDA_PIN   5
 #define SCL_PIN   4
 
+extern short UpArrow[];
+extern short DownArrow[];
 
 void setup() 
 {
@@ -20,6 +22,8 @@ void setup()
 	Wire.begin(SDA_PIN, SCL_PIN); // Inizializza I2C per NodeMCU
 	EEPROM.begin(512);
 	LCDInit();
+	LCDCreateIcon(UpArrow, UP_ARROW);
+	LCDCreateIcon(DownArrow, DOWN_ARROW);
 #ifndef CALIBRATION_PROCEDURE
 	BalanceSetup();
 #else
