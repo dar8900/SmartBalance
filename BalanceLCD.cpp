@@ -303,7 +303,7 @@ MAIN_FUNCTIONS MenuChoice()
 				if(ArrowPos > 1)
 					ArrowPos--;
 				else
-					ArrowPos = MAX_FUNCTIONS - 1;
+					ArrowPos = MAX_FUNCTIONS;
 				break;
 			case DOWN:
 				ClearChar(ArrowPos, 0);
@@ -311,7 +311,7 @@ MAIN_FUNCTIONS MenuChoice()
 					FunctionChoice++;
 				else
 					FunctionChoice = BALANCE_FUNCTION;
-				if(ArrowPos < MAX_FUNCTIONS - 1)
+				if(ArrowPos < MAX_FUNCTIONS)
 					ArrowPos++;
 				else
 					ArrowPos = 1;
