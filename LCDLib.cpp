@@ -104,14 +104,21 @@ void LCDPrintValue(short row, short col, short value)
   lcd_main.print(ValStr);
 }
 
+void ClearChar(short Row, short Col)
+{
+	lcd_main.setCursor(Col, Row); 
+	lcd_main.print(" ");
+}
 
 void ClearLCDLine(short row)
 {
-  for(uint8_t Col = 0; Col < MAX_LCD_COL; Col++)
-  {
-	lcd_main.print(" ");
-	lcd_main.setCursor(Col, row);
-  }
+	lcd_main.setCursor(0, row); 
+#ifdef LCD16	
+	lcd_main.print("                ");	
+#endif
+#ifdef LCD20
+	lcd_main.print("                    ");	
+#endif
 }
 
 void LCDDisplayLight(bool IsOn)

@@ -34,6 +34,7 @@ void FirstCalibration()
 	long zero_factor = scale.read_average();
 	uint8_t ButtonPress = NO_PRESS;
 	bool ExitCalibration = false;
+	ClearLCD();
 	while(!ExitCalibration)
 	{
 		scale.set_scale(calibration_factor); //Adjust to this calibration factor

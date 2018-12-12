@@ -9,8 +9,7 @@
 #define SDA_PIN   5
 #define SCL_PIN   4
 
-extern short UpArrow[];
-extern short DownArrow[];
+
 
 void setup() 
 {
@@ -24,6 +23,8 @@ void setup()
 	LCDInit();
 	LCDCreateIcon(UpArrow, UP_ARROW);
 	LCDCreateIcon(DownArrow, DOWN_ARROW);
+	LCDCreateIcon(ToRightArrow, TO_RIGHT_ARROW);
+	LCDCreateIcon(ToLeftArrow, TO_LEFT_ARROW);
 #ifndef CALIBRATION_PROCEDURE
 	BalanceSetup();
 	FillNutritionalTableSizeArray();
@@ -35,10 +36,23 @@ void setup()
 void loop() 
 {
 #ifndef CALIBRATION_PROCEDURE
-	if(FoodChoiceMenu())
+	WichFunction = MenuChoice();
+	switch(WichFunction)
 	{
-		ShowMeasure();
+		case BALANCE_FUNCTION:
+			if(FoodChoiceMenu())
+			{
+				ShowMeasure();
+			}
+			break;
+		case INFO_FUNCTION:
+			if(FoodChoiceMenu)
+			{
+				ShowInfo();
+			}
+			break;
+		default:
+			break;		
 	}
-	
 #endif
 }

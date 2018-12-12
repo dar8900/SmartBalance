@@ -24,6 +24,7 @@
 #define CENTER_ALIGN              25
 #define RIGHT_ALIGN      MAX_LCD_COL
 #define LEFT_ALIGN                 0
+#define AFTER_ARROW_POS			   1
 
 #ifdef LCD16
 typedef enum
@@ -49,6 +50,7 @@ void ClearLCD(void);
 void BlinkDisplay(short NumTimes);
 void LCDPrintString(short row, short col, String string);
 void LCDPrintValue(short row, short col, short value);
+void ClearChar(short Row, short Col);
 void ClearLCDLine(short row);
 void LCDDisplayLight(bool IsOn);
 void LCDBlink(bool IsBlinking);
