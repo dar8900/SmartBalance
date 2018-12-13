@@ -10,7 +10,7 @@
 #include "Calibration.h"
 #include "Web.h"
 #include "EepromAddr.h"
-
+#include "BalanceLCD.h"
 
 
 /* Set these to your desired credentials. */
@@ -18,6 +18,124 @@ const char *ssid = "SmartBalance";
 const char *password = "SmartB";
 
 ESP8266WebServer server(80);
+
+String HomePage;
+
+static void BuildCategoryFoodHtml()
+{
+	String Option;
+	HomePage = "<!DOCTYPE html> <html><body><h2>Categoria</h2><p>Selezione la categoria:</p><form action=\"/category_selection\" method=\"POST\">  <select name=\"category\">"; 
+	for(uint8_t i = 0; i < MAX_CATEGORIES; i++)
+	{
+		Option = "<option name=";
+		Option += "\"categoria ";
+		Option += String(i+1) + "\"";
+		Option += "value=\"";
+		Option += "categoria_";
+		Option += String(i+1) + "\">";
+		Option += String(CategoryTable[i].CategoryName);
+		Option += "</option>";
+	}
+	HomePage += Option + "</select><br><br>";
+	HomePage += "<input type=\"submit\" value=\"Scegli categoria\"></form>";
+	// HomePage += "<h2>Cibo</h2><p>Selezione il cibo:</p><form action=\"/food_selection\" method=\"POST\">  <select name=\"food\">"; 
+	// for(uint8_t i = 0; i < MAX_CATEGORIES; i++)
+	// {
+		// Option = "<option name=";
+		// Option += "\"cibo ";
+		// Option += String(i+1) + "\"";
+		// Option += "value=\"";
+		// Option += "cibo_";
+		// Option += String(i+1) + "\">";
+		// Option += String(CategoryTable[i].CategoryName);
+		// Option += "</option>";
+	// }
+	HomePage += "</body></html>";
+}
+
+
+void WebServerInit()
+{
+	BuildCategoryFoodHtml();
+	
+	server.begin(); 
+	server.on("/", HTTP_GET, handleHomePage);
+	server.on("/category_selection", HTTP_POST, handleCategorySelection);
+	server.onNotFound(handleNotFound);
+}
+
+static uint8_t SearchCategoryNumber(String CategoryName)
+{
+	uint8_t i = 0;
+	for(i = 0; i < MAX_CATEGORIES; i++)
+	{
+		if(CategoryName == String(CategoryTable[i].CategoryName))
+			break;
+	}
+	return i;
+}
+
+static int16_t SearchFoodNumber(String Food, NUTRITIONAL_VALUES *NutritionalTable, uint8_t NutritionalTableSize)
+{
+	int16_t FoodIndex = 0;
+	bool Found = false;
+	for(FoodIndex = 0; FoodIndex <= NutritionalTableSize; FoodIndex++)
+	{
+		if(String(NutritionalTable[FoodIndex].FoodName) == Food)
+		{
+			Found = true;
+			break;
+		}
+	}
+	if(Found)
+		return FoodIndex;
+	else
+		return -1;
+}
+
+void handleHomePage()
+{
+	server.send(200, "text/html", HomePage.c_str());
+}
+
+void handleCategorySelection() 
+{                
+	String ClientCategoryChoice = String(server.arg("category"));
+	CategoryChoice = SearchCategoryNumber(ClientCategoryChoice);
+	ClearLCD();
+	LCDPrintString(TWO, CENTER_ALIGN, "Categoria " + CategoryChoice);
+	delay(3000);
+	ClearLCD();
+}
+
+void handleNotFound()
+{
+	server.send(404, "text/plain", "404: Not found"); // Send HTTP status 404 (Not Found) when there's no handler for the URI in the request
+}
+
+    // <option name=\"categoria n\" value=\"categoria_n\">Nome categoria</option>
+  // </select>
+  // <br><br>
+ // <input type=\"submit\" value=\"Scegli categoria\">
+// </form>
+
+
+// <form action=\"/category_selection\" method=\"POST\">
+  // <select name="category">
+    // <option name=\"categoria n\" value="categoria_n">Nome categoria</option>
+  // </select>
+  // <br><br>
+ // <input type=\"submit\" value=\"Scegli categoria\">
+// </form>
+
+
+// </body>
+// </html>
+// ";
+
+
+
+
 
 /*
 

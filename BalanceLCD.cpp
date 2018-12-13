@@ -5,7 +5,7 @@
 #include "Calibration.h"
 
 uint8_t  CategoryChoice;
-uint8_t  FoodChoice;
+uint16_t  FoodChoice;
 MAIN_FUNCTIONS WichFunction;
 
 short UpArrow[] = 
@@ -68,7 +68,8 @@ String MenuTitle[] =
 bool FoodChoiceMenu() 
 {
 	bool IsCategory = true, IsFood = false; // Se vero selezioni la categoria altrimenti il cibo
-	uint8_t Category = 0, Food = 0, FoodMaxItem = 0;
+	uint8_t Category = 0;
+	uint16_t Food = 0, FoodMaxItem = 0;
 	bool Exit = false, ChoiceComplete = false;
 	uint8_t ButtonPress = NO_PRESS;
 	String NumItem;
@@ -205,7 +206,8 @@ void ShowMeasure()
 void ShowInfo()
 {
 	uint8_t ButtonPress = NO_PRESS;
-	uint8_t Food = FoodChoice, FoodMaxItem = 0, Category = CategoryChoice;
+	uint16_t Food = FoodChoice, FoodMaxItem = 0;
+	uint16_t Category = CategoryChoice;
 	bool ExitShowInfo = false;
 	ClearLCD();
 	String FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);

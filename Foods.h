@@ -17,7 +17,7 @@ typedef struct
 {
 	const char *CategoryName;
 	const NUTRITIONAL_VALUES *NutritionalTable;
-	const uint8_t *TableSizeArray;
+	const uint16_t *TableSizeArray;
 }NUTRITIONAL_CATEGORIES;
 
 typedef enum
@@ -39,13 +39,7 @@ typedef enum
 
 
 
-extern uint8_t NutritionalTableSizes[MAX_CATEGORIES];
-
-
-
-
-
-
+extern uint16_t NutritionalTableSizes[MAX_CATEGORIES];
 extern const NUTRITIONAL_CATEGORIES CategoryTable[];
 
 

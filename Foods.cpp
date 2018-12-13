@@ -1,6 +1,6 @@
 #include"Foods.h"
 
-uint8_t NutritionalTableSizes[MAX_CATEGORIES];
+uint16_t NutritionalTableSizes[MAX_CATEGORIES];
 
 
 /*
@@ -824,7 +824,7 @@ const NUTRITIONAL_CATEGORIES CategoryTable[] =
 
 void FillNutritionalTableSizeArray()
 {
-	uint8_t TableIndx = 0;
+	uint16_t TableIndx = 0;
 	for(TableIndx = 0; TableIndx < MAX_CATEGORIES; TableIndx++)
 	{		
 		NutritionalTableSizes[TableIndx] = (sizeof(CategoryTable[TableIndx].NutritionalTable)/sizeof(NUTRITIONAL_VALUES));

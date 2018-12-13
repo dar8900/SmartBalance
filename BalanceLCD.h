@@ -26,7 +26,7 @@ extern short ToRightArrow[];
 extern short ToLeftArrow[];
 
 extern uint8_t  CategoryChoice;
-extern uint8_t  FoodChoice;
+extern uint16_t  FoodChoice;
 extern MAIN_FUNCTIONS WichFunction;
 
 bool FoodChoiceMenu(void); 
