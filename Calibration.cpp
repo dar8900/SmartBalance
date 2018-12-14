@@ -21,13 +21,9 @@ HX711 scale(HX711_CLK, HX711_DOUT);
 
 
 
-
-#ifdef CALIBRATION_PROCEDURE
-
-float calibration_factor = 0; // this calibration factor is adjusted according to my load cell
-
 void FirstCalibration()
 {
+	float calibration_factor = 0; // this calibration factor is adjusted according to my load cell
 	scale.set_scale();
 	scale.tare(); //Reset the scale to 0
 	String ValueUnit;
@@ -70,15 +66,36 @@ void FirstCalibration()
 	}
 }
 
-#else
+
 
 void BalanceSetup()
 {
+	uint8_t BalanceMode = 10;
 	float CalibrationValue = 0.0;
-	EEPROM.get(CALIBRATION_ADDR, CalibrationValue);
-	scale.set_scale(CalibrationValue);
-	scale.tare(5); //Reset the scale to 0
-	delay(1000);	
+	BalanceMode = EEPROM.read(CALIBRATION_MODE_ADDR);
+	if(BalanceMode != CALIBRATION_MODE || BalanceMode != NORMAL_MODE)
+	{
+		BalanceMode = NORMAL_MODE;
+		EEPROM.write(CALIBRATION_MODE_ADDR, BalanceMode);
+		EEPROM.commit();
+		delay(100);
+		ESP.restart();
+	}
+	if(BalanceMode == CALIBRATION_MODE)
+	{
+		FirstCalibration();
+		EEPROM.write(CALIBRATION_MODE_ADDR, NORMAL_MODE);
+		EEPROM.commit();
+		delay(100);
+		ESP.restart();		
+	}
+	else if(BalanceMode == NORMAL_MODE)
+	{
+		EEPROM.get(CALIBRATION_ADDR, CalibrationValue);
+		scale.set_scale(CalibrationValue);
+		scale.tare(5); //Reset the scale to 0
+		delay(1000);
+	}	
 }
 
 float GetWeight()
@@ -92,5 +109,3 @@ void SetTare()
 {
 	scale.tare(5);
 }
-
-#endif // CALIBRATION_PROCEDURE

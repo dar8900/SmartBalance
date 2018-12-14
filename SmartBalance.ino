@@ -1,13 +1,34 @@
 #include "SmartBalance.h"
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
 #include "LCDLib.h"
 #include "BalanceLCD.h"
 #include "Calibration.h"
 #include "Foods.h"
 #include <Wire.h>
 #include <EEPROM.h>
+#include "EepromAddr.h"
+#include "Web.h"
 
 #define SDA_PIN   5
 #define SCL_PIN   4
+
+extern WiFiClient client;
+
+SYSTEM_FLAGS Flags;
+
+
+void CheckEvent()
+{
+	if(client.connected())
+	{
+		Flags.ClientConnected = true;
+		HandleClient();
+	}
+}
+
+
 
 
 
@@ -25,17 +46,15 @@ void setup()
 	LCDCreateIcon(DownArrow, DOWN_ARROW);
 	LCDCreateIcon(ToRightArrow, TO_RIGHT_ARROW);
 	LCDCreateIcon(ToLeftArrow, TO_LEFT_ARROW);
-#ifndef CALIBRATION_PROCEDURE
 	BalanceSetup();
 	FillNutritionalTableSizeArray();
-#else
-	FirstCalibration()
-#endif
+	WebServerInit();
+	CategoryChoice = MAX_CATEGORY;
+	FoodChoice = MAX_FOOD;
 }
 
 void loop() 
 {
-#ifndef CALIBRATION_PROCEDURE
 	WichFunction = MenuChoice();
 	switch(WichFunction)
 	{
@@ -51,8 +70,12 @@ void loop()
 				ShowInfo();
 			}
 			break;
+		case CALIBRATION_FUNCTION:
+			EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
+			EEPROM.commit();
+			delay(100);
+			ESP.restart();	
 		default:
 			break;		
 	}
-#endif
 }

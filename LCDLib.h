@@ -44,6 +44,12 @@ typedef enum
 } LCD_ROWS;	
 #endif
 
+typedef enum
+{
+	TO_LEFT = 0,
+	TO_RIGHT	
+}SCROLL_MOVEMENT;
+
 void LCDInit(void);
 void LCDMoveCursor(short row, short col);
 void ClearLCD(void);
@@ -56,5 +62,5 @@ void LCDDisplayLight(bool IsOn);
 void LCDBlink(bool IsBlinking);
 bool LCDCreateIcon(short Icon[], short IconNum);
 void LCDShowIcon(short IconNum);
-
+void ScrollText(String Text, short Where, short DelayMs, short ScreenPos);
 #endif

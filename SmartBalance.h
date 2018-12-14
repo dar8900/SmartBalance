@@ -11,4 +11,14 @@ typedef enum
 	EXIT_PIN        // 15
 }PINS;
 
+typedef struct
+{
+	bool ClientConnected;
+	bool CategoryModified;	
+}SYSTEM_FLAGS;
+
+extern SYSTEM_FLAGS Flags;
+
+void CheckEvent(void);
+
 #endif

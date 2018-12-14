@@ -3,6 +3,10 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+#define MAX_CATEGORY     254
+#define MAX_FOOD         65534
+
+
 typedef struct
 {
 	const char*     FoodName;

@@ -156,3 +156,20 @@ void LCDShowIcon(short IconNum)
 {
 	lcd_main.write(IconNum);
 }
+
+void ScrollText(String Text, short Where, short DelayMs, short ScreenPos)
+{
+	uint8_t ScrollLen = 0;
+	if(ScreenPos == CENTER_ALIGN)
+	{
+		ScrollLen = (MAX_LCD_COL - Text.length()) + MAX_LCD_COL;
+	}
+	for(uint8_t i = 0; i < ScrollLen; i++)
+	{
+		if(Where == TO_LEFT)
+			lcd_main.scrollDisplayLeft();
+		else
+			lcd_main.scrollDisplayRight();
+		delay(DelayMs);
+	}	
+}

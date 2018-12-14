@@ -11,6 +11,7 @@
 #include "Web.h"
 #include "EepromAddr.h"
 #include "BalanceLCD.h"
+#include "SmartBalance.h"
 
 
 /* Set these to your desired credentials. */
@@ -18,16 +19,17 @@ const char *ssid = "SmartBalance";
 const char *password = "SmartB";
 
 ESP8266WebServer server(80);
+WiFiClient client;
 
 String HomePage;
 
 static void BuildCategoryFoodHtml()
 {
-	String Option;
-	HomePage = "<!DOCTYPE html> <html><body><h2>Categoria</h2><p>Selezione la categoria:</p><form action=\"/category_selection\" method=\"POST\">  <select name=\"category\">"; 
+	String Option = "";
+	HomePage = "<!DOCTYPE html> <html><body><h2style=\"text-align:center;\">Categoria</h2><p style=\"text-align:center;\">Selezione la categoria:</p><form style=\"text-align:center;\" action=\"/category_selection\" method=\"POST\">  <select name=\"category\">"; 
 	for(uint8_t i = 0; i < MAX_CATEGORIES; i++)
 	{
-		Option = "<option name=";
+		Option += "<option name=";
 		Option += "\"categoria ";
 		Option += String(i+1) + "\"";
 		Option += "value=\"";
@@ -102,6 +104,7 @@ void handleCategorySelection()
 {                
 	String ClientCategoryChoice = String(server.arg("category"));
 	CategoryChoice = SearchCategoryNumber(ClientCategoryChoice);
+	Flags.CategoryModified = true;
 	ClearLCD();
 	LCDPrintString(TWO, CENTER_ALIGN, "Categoria " + CategoryChoice);
 	delay(3000);
@@ -111,6 +114,11 @@ void handleCategorySelection()
 void handleNotFound()
 {
 	server.send(404, "text/plain", "404: Not found"); // Send HTTP status 404 (Not Found) when there's no handler for the URI in the request
+}
+
+void HandleClient()
+{
+	server.handleClient();                     // Listen for HTTP requests from clients
 }
 
     // <option name=\"categoria n\" value=\"categoria_n\">Nome categoria</option>

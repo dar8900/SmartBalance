@@ -6,7 +6,8 @@
 
 void handleHomePage(void);
 void handleCategorySelection(void);
-void WebServer(void);
+void WebServerInit(void);
 void handleNotFound(void);
+void HandleClient(void);
 
 #endif
