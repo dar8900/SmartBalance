@@ -21,14 +21,23 @@ SYSTEM_FLAGS Flags;
 
 void CheckEvent()
 {
-	if(client.connected())
-	{
-		Flags.ClientConnected = true;
-		HandleClient();
-	}
+	// if(client.connected())
+	// {
+		// Flags.ClientConnected = true;
+		// HandleClient();
+	// }
 }
 
 
+
+void EEPROMUpdate(uint8_t Addr, uint8_t Value)
+{
+	if(EEPROM.read(Addr) != Value)
+	{
+		EEPROM.write(Addr, Value);
+		EEPROM.commit();
+	}
+}
 
 
 
@@ -48,7 +57,7 @@ void setup()
 	LCDCreateIcon(ToLeftArrow, TO_LEFT_ARROW);
 	BalanceSetup();
 	FillNutritionalTableSizeArray();
-	WebServerInit();
+	//WebServerInit();
 	CategoryChoice = MAX_CATEGORY;
 	FoodChoice = MAX_FOOD;
 }
@@ -71,8 +80,7 @@ void loop()
 			}
 			break;
 		case CALIBRATION_FUNCTION:
-			EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
-			EEPROM.commit();
+			EEPROMUpdate(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
 			delay(100);
 			ESP.restart();	
 		default:

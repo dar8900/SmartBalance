@@ -10,10 +10,12 @@ uint8_t KeyPressed()
 	{
 		WichPressed = digitalRead(PinIndex);
 		if(WichPressed == HIGH)
+		{
+			delay(10);
 			break;
+		}
 		else
 			WichPressed = NO_PRESS;
-		delay(25);
 	}
 	if(WichPressed == HIGH)
 	{

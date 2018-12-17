@@ -13,7 +13,7 @@ typedef enum
 	NORMAL_MODE
 }BALANCE_MODES;
 
-void FirstCalibration(void);
+void Calibration(void);
 
 void BalanceSetup(void);
 float GetWeight(void);

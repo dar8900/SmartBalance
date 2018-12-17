@@ -5,6 +5,8 @@
 #include "Calibration.h"
 #include "SmartBalance.h"
 
+#define MAX_LCD_LINE_MENU 3
+
 uint8_t  CategoryChoice;
 uint16_t  FoodChoice;
 MAIN_FUNCTIONS WichFunction;
@@ -175,7 +177,7 @@ void ShowMeasure()
 	uint16_t Carbs = 0, Protein = 0, Fats = 0;
 	bool ExitShowMeasure = false;
 	char Values[5];
-	String WeightStr, CaloriesStr, CarbsStr, ProtStr, FatsStr, FibersStr;
+	String WeightStr, CaloriesStr, CarbsStr, ProtStr, FatsStr;
 	ClearLCD();
 	while(!ExitShowMeasure)
 	{
@@ -305,6 +307,13 @@ void ShowInfo()
 	}
 }
 
+static void RefreshMenuChoice(String *Title)
+{
+	for(uint8_t MenuIndx = 0; MenuIndx < MAX_LCD_LINE_MENU; MenuIndx++)
+	{
+		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
+	}	
+}
 
 MAIN_FUNCTIONS MenuChoice()
 {
@@ -314,10 +323,7 @@ MAIN_FUNCTIONS MenuChoice()
 	uint8_t FunctionChoice = BALANCE_FUNCTION;
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
-	for(uint8_t MenuIndx = 0; MenuIndx < MAX_FUNCTIONS; MenuIndx++)
-	{
-		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, MenuTitle[MenuIndx]);
-	}
+	RefreshMenuChoice(MenuTitle);
 	while(!ExitMenuChoice)
 	{
 		LCDMoveCursor(ArrowPos, 0);

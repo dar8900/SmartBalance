@@ -15,8 +15,9 @@
 
 
 /* Set these to your desired credentials. */
-const char *ssid = "SmartBalance";
+const char *ssid = "SmartB_AP";
 const char *password = "SmartB";
+const char *DNSName = "SB01";
 
 ESP8266WebServer server(80);
 WiFiClient client;
@@ -58,12 +59,34 @@ static void BuildCategoryFoodHtml()
 
 void WebServerInit()
 {
-	BuildCategoryFoodHtml();
-	
-	server.begin(); 
-	server.on("/", HTTP_GET, handleHomePage);
-	server.on("/category_selection", HTTP_POST, handleCategorySelection);
-	server.onNotFound(handleNotFound);
+	if(WiFi.softAP(ssid, password))
+	{
+		ClearLCD();
+		if (MDNS.begin(DNSName)) 
+		{        
+			LCDPrintString(ONE, CENTER_ALIGN, "Nome Web:");
+			LCDPrintString(TWO, CENTER_ALIGN, "http://SB01.local");
+			LCDPrintString(THREE, LEFT_ALIGN, "IP:");
+			LCDPrintString(THREE, RIGHT_ALIGN, String(WiFi.softAPIP()));
+			LCDPrintString(FOUR, LEFT_ALIGN, "SSID:");
+			LCDPrintString(FOUR, RIGHT_ALIGN, String(ssid));
+		} 
+		else
+		{
+
+			LCDPrintString(TWO, LEFT_ALIGN, "IP:");
+			LCDPrintString(TWO, RIGHT_ALIGN, String(WiFi.softAPIP()));
+			LCDPrintString(THREE, LEFT_ALIGN, "SSID:");
+			LCDPrintString(THREE, RIGHT_ALIGN, String(ssid));
+		}
+		delay(1500);
+		ClearLCD();
+		BuildCategoryFoodHtml();
+		server.begin(); 
+		server.on("/", HTTP_GET, handleHomePage);
+		server.on("/category_selection", HTTP_POST, handleCategorySelection);
+		server.onNotFound(handleNotFound);
+	}
 }
 
 static uint8_t SearchCategoryNumber(String CategoryName)

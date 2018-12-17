@@ -19,6 +19,7 @@ typedef struct
 
 extern SYSTEM_FLAGS Flags;
 
+void EEPROMUpdate(uint8_t Addr, uint8_t Value);
 void CheckEvent(void);
 
 #endif
