@@ -4,12 +4,24 @@
 #include "Foods.h"
 #include "Calibration.h"
 #include "SmartBalance.h"
+#include "EepromAddr.h"
+#include <EEPROM.h>
 
 #define MAX_LCD_LINE_MENU 3
+
+
+PREFERENCE_TYPE FoodPreference[MAX_PREFERENCE] = 
+{
+	{FOOD_1_ADDR, FOOD_1_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_2_ADDR, FOOD_2_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_3_ADDR, FOOD_3_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_4_ADDR, FOOD_4_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+};
 
 uint8_t  CategoryChoice;
 uint16_t  FoodChoice;
 MAIN_FUNCTIONS WichFunction;
+uint8_t PreferenceNumber;
 
 short UpArrow[] = 
 {
@@ -63,9 +75,21 @@ String MenuTitle[] =
 {
 	"Bilancia",
 	"Informazioni",
+	"Preferito 1",
+	"Preferito 2",
+	"Preferito 3",
+	"Preferito 4",
 	"Calibrazione",
 };
 
+void PreferenceInit()
+{
+	for(uint8_t PrefIndex = 0; PrefIndex < MAX_PREFERENCE; PrefIndex++)
+	{
+		FoodPreference[PrefIndex].CategoryValue = EEPROM.read(FoodPreference[PrefIndex].CategoryAddr);
+		FoodPreference[PrefIndex].FoodValue = EEPROM.read(FoodPreference[PrefIndex].FoodAddr);
+	}	
+}
 
 
 // Prima la scelta della categoria, poi la scelta dell'alimento
@@ -307,27 +331,107 @@ void ShowInfo()
 	}
 }
 
-static void RefreshMenuChoice(String *Title)
+
+
+bool CheckPreference(uint8_t PreferenceChoice)
 {
+	bool Checked = false;
+	if(FoodPreference[PreferenceChoice].CategoryValue == INVALID_EEPROM_VALUE && FoodPreference[PreferenceChoice].FoodValue == INVALID_EEPROM_VALUE)
+	{
+		ClearLCD();
+		LCDPrintString(ONE, CENTER_ALIGN, "Nessun cibo");
+		LCDPrintString(TWO, CENTER_ALIGN, "memorizzato.");
+		LCDPrintString(THREE, CENTER_ALIGN, "Impostarlo?");
+		if(CheckYesNo())
+		{
+			ClearLCD();
+			CategoryChoice = MAX_CATEGORY;
+			FoodChoice = MAX_FOOD;
+			if(FoodChoiceMenu())
+			{
+				// FoodPreference[PreferenceChoice].CategoryValue = CategoryChoice;
+				// FoodPreference[PreferenceChoice].FoodValue = FoodChoice;
+				EEPROMUpdate(FoodPreference[PreferenceChoice].CategoryAddr, CategoryChoice);
+				EEPROMUpdate(FoodPreference[PreferenceChoice].FoodAddr, FoodChoice);
+				ClearLCD();
+				LCDPrintString(TWO, CENTER_ALIGN, "Preferenza salvata");
+				delay(1500);
+				ClearLCD();
+				Checked = true;
+			}
+			else
+				Checked = false;
+		}
+		else
+			Checked = false;
+	}
+	else
+	{
+		ClearLCD();
+		LCDPrintString(TWO, CENTER_ALIGN, "Impostare una");
+		LCDPrintString(THREE, CENTER_ALIGN, "nuova preferenza?");
+		if(CheckYesNo())
+		{
+			ClearLCD();
+			CategoryChoice = MAX_CATEGORY;
+			FoodChoice = MAX_FOOD;
+			if(FoodChoiceMenu())
+			{
+				// FoodPreference[PreferenceChoice].CategoryValue = CategoryChoice;
+				// FoodPreference[PreferenceChoice].FoodValue = FoodChoice;
+				EEPROMUpdate(FoodPreference[PreferenceChoice].CategoryAddr, CategoryChoice);
+				EEPROMUpdate(FoodPreference[PreferenceChoice].FoodAddr, FoodChoice);
+				ClearLCD();
+				LCDPrintString(TWO, CENTER_ALIGN, "Preferenza salvata");
+				delay(1500);
+				ClearLCD();
+				Checked = true;
+			}
+			else
+			{
+				ClearLCD();
+				LCDPrintString(TWO, CENTER_ALIGN, "Non salvata");
+				delay(1500);
+				ClearLCD();
+				Checked = false;
+			}
+		}
+		else
+		{
+			CategoryChoice = FoodPreference[PreferenceChoice].CategoryValue;
+			FoodChoice = FoodPreference[PreferenceChoice].FoodValue;
+			Checked = true;
+		}
+	}
+	return Checked;
+}
+
+static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, uint8_t FirstListItem)
+{
+	uint8_t Aux = 0;
 	for(uint8_t MenuIndx = 0; MenuIndx < MAX_LCD_LINE_MENU; MenuIndx++)
 	{
+		Aux = FirstListItem + MenuIndx;
+		if(Aux >= MaxItem)
+			break;
 		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
-	}	
+	}
+	LCDMoveCursor(ItemPos, 0);
+	LCDShowIcon(TO_RIGHT_ARROW);	
 }
 
 MAIN_FUNCTIONS MenuChoice()
 {
 	uint8_t ButtonPress = NO_PRESS;
-	uint8_t ArrowPos = 1;
+	uint8_t ArrowPos = 1, OldArrowPos = 1;
+	uint8_t TopItem = 0;
 	bool ExitMenuChoice = false;
 	uint8_t FunctionChoice = BALANCE_FUNCTION;
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
-	RefreshMenuChoice(MenuTitle);
 	while(!ExitMenuChoice)
 	{
-		LCDMoveCursor(ArrowPos, 0);
-		LCDShowIcon(TO_RIGHT_ARROW);
+		RefreshMenuChoice(MenuTitle, MAX_FUNCTIONS, ArrowPos, TopItem);
 		CheckEvent();
 		if(Flags.CategoryModified)
 		{
@@ -341,26 +445,16 @@ MAIN_FUNCTIONS MenuChoice()
 			case EXIT:
 				break;
 			case UP:
-				ClearChar(ArrowPos, 0);
 				if(FunctionChoice > BALANCE_FUNCTION)
 					FunctionChoice--;
 				else
 					FunctionChoice = MAX_FUNCTIONS - 1;
-				if(ArrowPos > 1)
-					ArrowPos--;
-				else
-					ArrowPos = MAX_FUNCTIONS;
 				break;
 			case DOWN:
-				ClearChar(ArrowPos, 0);
 				if(FunctionChoice < MAX_FUNCTIONS - 1)
 					FunctionChoice++;
 				else
 					FunctionChoice = BALANCE_FUNCTION;
-				if(ArrowPos < MAX_FUNCTIONS)
-					ArrowPos++;
-				else
-					ArrowPos = 1;
 				break;
 			case OK_TARE:
 				ExitMenuChoice = true;
@@ -369,8 +463,78 @@ MAIN_FUNCTIONS MenuChoice()
 				break;			
 			
 		}
+		if(FunctionChoice < MAX_LCD_LINE_MENU)
+		{
+			TopItem = 0;
+			ArrowPos = FunctionChoice  + 1;
+			if(OldArrowPos != ArrowPos)
+			{
+				ClearChar(OldArrowPos, 0);
+				OldArrowPos = ArrowPos;
+			}
+		}
+		else
+		{
+			TopItem = FunctionChoice - MAX_LCD_LINE_MENU + 1;
+			ArrowPos = MAX_LCD_LINE_MENU;
+			if(OldArrowPos != ArrowPos)
+			{
+				ClearChar(OldArrowPos, 0);
+				OldArrowPos = ArrowPos;
+			}
+		}
 		delay(30);
 	}
 	return (MAIN_FUNCTIONS)FunctionChoice;
 }
 
+
+bool CheckYesNo()
+{
+	bool Exit = false, Choice = false;
+	String YesNo[] = {"No", "Si"};
+	uint8_t ButtonPress = NO_PRESS;
+	short YesNoChoice = 0;
+	while(!Exit)
+	{
+		LCDPrintString(FOUR, CENTER_ALIGN, YesNo[YesNoChoice]);
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
+		{
+			case UP:
+				if(YesNoChoice == 0)
+					YesNoChoice = 1;
+				else
+					YesNoChoice = 0;
+				ClearLCDLine(FOUR);
+				break;
+			case DOWN:
+				if(YesNoChoice == 1)
+					YesNoChoice = 0;
+				else
+					YesNoChoice = 1;
+					ClearLCDLine(FOUR);
+				break;
+			case OK_TARE:
+				if(YesNoChoice == 1)
+				{
+					Exit = true;
+					Choice = true;
+				}
+				else
+				{
+					Exit = true;
+					Choice = false;
+				}
+				break;
+			case EXIT:
+				Exit = true;
+				Choice = false;
+			default:
+				break;
+		}
+		ButtonPress = NO_PRESS;
+		delay(30);
+	}
+	return Choice;
+}

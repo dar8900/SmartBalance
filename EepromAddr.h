@@ -1,8 +1,19 @@
 #ifndef EEPROM_ADDR_H
 #define EEPROM_ADDR_H
 
+#define INVALID_EEPROM_VALUE 	0xFF
+
+
 #define CALIBRATION_MODE_ADDR    0
 #define CALIBRATION_ADDR 	    10
+
+typedef enum
+{
+	FOOD_1_ADDR = 20,
+	FOOD_2_ADDR = 22,
+	FOOD_3_ADDR = 24,
+	FOOD_4_ADDR = 26,
+}PREFERENCE_ADDR;
 
 
 #endif

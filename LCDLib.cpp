@@ -104,6 +104,13 @@ void LCDPrintValue(short row, short col, short value)
   lcd_main.print(ValStr);
 }
 
+void LCDPrintChar(short Row, short Col, String Character)
+{
+	lcd_main.setCursor(Row, Col);
+	lcd_main.print(Character);
+}
+
+
 void ClearChar(short Row, short Col)
 {
 	lcd_main.setCursor(Col, Row); 

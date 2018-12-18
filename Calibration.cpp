@@ -14,8 +14,9 @@
 #include "LCDLib.h"
 #include "Keyboard.h"
 #include "SmartBalance.h"
+#include "BalanceLCD.h"
 	
-
+extern PREFERENCE_TYPE FoodPreference[MAX_PREFERENCE];
  
 HX711 scale(HX711_CLK, HX711_DOUT);
 
@@ -30,6 +31,11 @@ void BalanceSetup()
 		ClearLCD();
 		BalanceMode = CALIBRATION_MODE;
 		EEPROMUpdate(CALIBRATION_MODE_ADDR, BalanceMode);
+		for(uint8_t PrefIndex = 0; PrefIndex < MAX_PREFERENCE; PrefIndex++)
+		{
+			EEPROMUpdate(FoodPreference[PrefIndex].CategoryAddr, INVALID_EEPROM_VALUE);
+			EEPROMUpdate(FoodPreference[PrefIndex].FoodAddr, INVALID_EEPROM_VALUE);
+		}	
 		LCDPrintString(ONE, CENTER_ALIGN, "Inizializzo la");
 		LCDPrintString(TWO, CENTER_ALIGN, "bilancia, attendere");
 		delay(1000);

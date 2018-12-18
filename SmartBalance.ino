@@ -15,6 +15,7 @@
 #define SCL_PIN   4
 
 extern WiFiClient client;
+extern uint8_t PreferenceNumber;
 
 SYSTEM_FLAGS Flags;
 
@@ -60,6 +61,7 @@ void setup()
 	//WebServerInit();
 	CategoryChoice = MAX_CATEGORY;
 	FoodChoice = MAX_FOOD;
+	PreferenceInit();
 }
 
 void loop() 
@@ -78,6 +80,22 @@ void loop()
 			{
 				ShowInfo();
 			}
+			break;
+		case PREFERENCE_1_FUNCTION:
+			if(CheckPreference(PREFERENCE_1))
+				ShowMeasure();
+			break;
+		case PREFERENCE_2_FUNCTION:
+			if(CheckPreference(PREFERENCE_2))
+				ShowMeasure();
+			break;
+		case PREFERENCE_3_FUNCTION:
+			if(CheckPreference(PREFERENCE_3))
+				ShowMeasure();
+			break;
+		case PREFERENCE_4_FUNCTION:
+			if(CheckPreference(PREFERENCE_4))
+				ShowMeasure();
 			break;
 		case CALIBRATION_FUNCTION:
 			EEPROMUpdate(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);

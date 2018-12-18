@@ -56,6 +56,7 @@ void ClearLCD(void);
 void BlinkDisplay(short NumTimes);
 void LCDPrintString(short row, short col, String string);
 void LCDPrintValue(short row, short col, short value);
+void LCDPrintChar(short Row, short Col, String Character);
 void ClearChar(short Row, short Col);
 void ClearLCDLine(short row);
 void LCDDisplayLight(bool IsOn);
