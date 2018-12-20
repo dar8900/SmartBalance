@@ -22,6 +22,7 @@ uint8_t  CategoryChoice;
 uint16_t  FoodChoice;
 MAIN_FUNCTIONS WichFunction;
 uint8_t PreferenceNumber;
+uint16_t CaloriesReached = 0;
 
 short UpArrow[] = 
 {
@@ -75,6 +76,7 @@ String MenuTitle[] =
 {
 	"Bilancia",
 	"Informazioni",
+	"Pasto",
 	"Preferito 1",
 	"Preferito 2",
 	"Preferito 3",
@@ -228,6 +230,10 @@ void ShowMeasure()
 		{
 			case EXIT:
 				ExitShowMeasure = true;
+				if(Flags.LaunchMode)
+					CaloriesReached += Calories;
+				else
+					CaloriesReached = 0;
 				CategoryChoice = MAX_CATEGORY;
 				FoodChoice = MAX_FOOD;
 				break;
@@ -406,6 +412,130 @@ bool CheckPreference(uint8_t PreferenceChoice)
 	}
 	return Checked;
 }
+
+
+
+void CompleteLaunch()
+{
+	uint8_t ButtonPress = NO_PRESS;
+	uint16_t CaloriesTarget = 0;
+	uint8_t DishesNumber = 0, DishIndex = 0;
+	bool ChoiceTargetAndDishes = false, Target = true, Dishes = false;
+	ClearLCD();
+	Flags.LaunchMode = true;
+	while(!ChoiceTargetAndDishes)
+	{
+		if(Target)
+		{
+			LCDPrintString(ONE, CENTER_ALIGN, "Scegli il target");
+			LCDPrintString(TWO, CENTER_ALIGN, "di calorie del tuo");
+			LCDPrintString(THREE, CENTER_ALIGN, "pasto:");
+			LCDPrintString(FOUR, CENTER_ALIGN, String(CaloriesTarget));
+		}
+		if(Dishes)
+		{
+			LCDPrintString(ONE, CENTER_ALIGN, "Scegli il numero");
+			LCDPrintString(TWO, CENTER_ALIGN, "di piatti ");
+			LCDPrintString(THREE, CENTER_ALIGN, "del tuo pasto:");
+			LCDPrintString(FOUR, CENTER_ALIGN, String(DishesNumber));			
+		}
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
+		{
+			case UP:
+				if(Target)
+				{
+					if(CaloriesTarget > 0)
+						CaloriesTarget -= 10;
+					else
+						CaloriesTarget = 10000;
+				}
+				if(Dishes)
+				{
+					if(DishesNumber > 0)
+						DishesNumber--;
+					else
+						DishesNumber = 10;
+				}
+				break;
+			case DOWN:
+				if(Target)
+				{
+					if(CaloriesTarget < 10000)
+						CaloriesTarget += 10;
+					else
+						CaloriesTarget = 0;
+				}
+				if(Dishes)
+				{
+					if(DishesNumber < 10)
+						DishesNumber++;
+					else
+						DishesNumber = 0;
+				}
+				break;
+			case OK_TARE:
+				if(Target)
+				{
+					Target = false;
+					Dishes = true;
+				}
+				else if(Dishes)
+				{
+					ChoiceTargetAndDishes = true;
+				}
+				break;
+			case EXIT:
+				return;
+				break;
+			default:
+				break;
+		}
+		delay(50);
+	}
+	for(DishIndex = 1; DishIndex <= DishesNumber; DishesNumber++)
+	{
+		int32_t Diff = CaloriesTarget - CaloriesReached;
+		ClearLCD();
+		LCDPrintString(ONE, CENTER_ALIGN, "Piatto "+ String(DishesNumber));
+		LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
+		Wait(THREE, false);
+		if(FoodChoiceMenu)
+		{
+			ShowMeasure();
+			ClearLCD();
+			LCDPrintString(ONE, CENTER_ALIGN, "Calorie rimanenti:");
+			LCDPrintString(TWO, CENTER_ALIGN, String(Diff));
+			LCDPrintString(THREE, CENTER_ALIGN, "Per continuare");
+			Wait(FOUR, false);
+		}
+		else
+			continue;
+		if(Diff <= 0)
+		{
+			ClearLCD();
+			LCDPrintString(ONE, CENTER_ALIGN, "Calorie target");
+			LCDPrintString(TWO, CENTER_ALIGN, "raggiunte!");	
+			delay(1500);
+			if(Diff < 0)
+			{
+				Diff = -Diff;
+				ClearLCD();
+				LCDPrintString(ONE, CENTER_ALIGN, "Superato il target");
+				LCDPrintString(TWO, CENTER_ALIGN, "di:");	
+				LCDPrintString(THREE, CENTER_ALIGN, String(Diff) + "kcal");	
+				delay(1500);		
+			}
+			ClearLCD();
+			break;
+		}	
+	}
+	CaloriesReached = 0;
+	Flags.LaunchMode = false;
+	return;
+}
+
+
 
 static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, uint8_t FirstListItem)
 {

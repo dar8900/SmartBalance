@@ -41,12 +41,13 @@ void EEPROMUpdate(uint8_t Addr, uint8_t Value)
 	}
 }
 
-static void Wait()
+void Wait(uint8_t Row, bool Clear)
 {
 	uint8_t ButtonPress = NO_PRESS;
 	bool ExitWait = false;
-	ClearLCD();
-	LCDPrintString(TWO, CENTER_ALIGN, "Attesa...");
+	if(Clear)
+		ClearLCD();
+	LCDPrintString(Row, CENTER_ALIGN, "premere ok...");
 	while(!ExitWait)
 	{
 		ButtonPress = KeyPressed();
@@ -54,8 +55,9 @@ static void Wait()
 		{
 			case UP:
 			case DOWN:
-			case OK_TARE:
 			case EXIT:
+				break;
+			case OK_TARE:
 				ExitWait = true;
 				break;
 			default:
@@ -80,7 +82,7 @@ void setup()
 	LCDCreateIcon(DownArrow, DOWN_ARROW);
 	LCDCreateIcon(ToRightArrow, TO_RIGHT_ARROW);
 	LCDCreateIcon(ToLeftArrow, TO_LEFT_ARROW);
-	Wait();
+	Wait(TWO, true);
 	BalanceSetup();
 	FillNutritionalTableSizeArray();
 	//WebServerInit();
