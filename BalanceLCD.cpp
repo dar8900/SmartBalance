@@ -336,7 +336,8 @@ void ShowInfo()
 bool CheckPreference(uint8_t PreferenceChoice)
 {
 	bool Checked = false;
-	if(FoodPreference[PreferenceChoice].CategoryValue == INVALID_EEPROM_VALUE && FoodPreference[PreferenceChoice].FoodValue == INVALID_EEPROM_VALUE)
+	if(FoodPreference[PreferenceChoice].CategoryValue == INVALID_EEPROM_VALUE && 
+		FoodPreference[PreferenceChoice].FoodValue == INVALID_EEPROM_VALUE)
 	{
 		ClearLCD();
 		LCDPrintString(ONE, CENTER_ALIGN, "Nessun cibo");

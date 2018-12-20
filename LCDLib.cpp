@@ -180,3 +180,11 @@ void ScrollText(String Text, short Where, short DelayMs, short ScreenPos)
 		delay(DelayMs);
 	}	
 }
+
+void LCDPrintMessage(String Message, short Row)
+{
+	ClearLCD();
+	LCDPrintString(Row, CENTER_ALIGN, Message);
+	delay(1500);
+	ClearLCD();
+}
