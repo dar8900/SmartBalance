@@ -10,6 +10,7 @@
 #include <EEPROM.h>
 #include "EepromAddr.h"
 #include "Web.h"
+#include "Keyboard.h"
 
 #define SDA_PIN   5
 #define SCL_PIN   4
@@ -40,7 +41,30 @@ void EEPROMUpdate(uint8_t Addr, uint8_t Value)
 	}
 }
 
-
+static void Wait()
+{
+	uint8_t ButtonPress = NO_PRESS;
+	bool ExitWait = false;
+	ClearLCD();
+	LCDPrintString(TWO, CENTER_ALIGN, "Attesa...");
+	while(!ExitWait)
+	{
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
+		{
+			case UP:
+			case DOWN:
+			case OK_TARE:
+			case EXIT:
+				ExitWait = true;
+				break;
+			default:
+				break;
+		}
+		delay(50);
+	}
+	ClearLCD();
+}
 
 void setup() 
 {
@@ -56,6 +80,7 @@ void setup()
 	LCDCreateIcon(DownArrow, DOWN_ARROW);
 	LCDCreateIcon(ToRightArrow, TO_RIGHT_ARROW);
 	LCDCreateIcon(ToLeftArrow, TO_LEFT_ARROW);
+	Wait();
 	BalanceSetup();
 	FillNutritionalTableSizeArray();
 	//WebServerInit();

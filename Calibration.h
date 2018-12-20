@@ -13,6 +13,9 @@ typedef enum
 	NORMAL_MODE
 }BALANCE_MODES;
 
+
+
+void AutoCalibration(void);
 void Calibration(void);
 
 void BalanceSetup(void);

@@ -208,7 +208,7 @@ void ShowMeasure()
 		LCDPrintString(ONE, CENTER_ALIGN, String(CategoryTable[CategoryChoice].NutritionalTable[Food].FoodName));
 		Weight = GetWeight();
 		CalcNutritionalValues(Weight, CategoryChoice, Food, &Calories, &Carbs, &Protein, &Fats);
-		WeightStr = String(Weight, 4) + "kg";
+		WeightStr = String(Weight, 4) + "g";
 		snprintf(Values, 5, "%   d", Calories);
 		CaloriesStr = String(Values) + "kcal";
 		snprintf(Values, 5, "%   d", Carbs);
