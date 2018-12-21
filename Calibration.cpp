@@ -29,8 +29,7 @@ void BalanceSetup()
 	if(BalanceMode != CALIBRATION_MODE && BalanceMode != NORMAL_MODE)
 	{
 		ClearLCD();
-		BalanceMode = CALIBRATION_MODE;
-		EEPROMUpdate(CALIBRATION_MODE_ADDR, BalanceMode);
+		EEPROMUpdate(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
 		for(uint8_t PrefIndex = 0; PrefIndex < MAX_PREFERENCE; PrefIndex++)
 		{
 			EEPROMUpdate(FoodPreference[PrefIndex].CategoryAddr, INVALID_EEPROM_VALUE);
@@ -118,7 +117,7 @@ void AutoCalibration()
 {
 	uint16_t WeightTarget = 0;
 	String WeightTargetStr;
-	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 200;
+	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 100;
 	float CalibrationFactor = 500.0, ReadedWeight = 0.0;
 	bool ExitSetWeightTarget = false;
 	ClearLCD();
@@ -170,7 +169,7 @@ void AutoCalibration()
 		TimerPoint--;
 		if(TimerPoint == 0)
 		{
-			TimerPoint = 200;
+			TimerPoint = 100;
 			LCDPrintString(TWO, PointPos, ".");
 			PointPos++;
 			if(PointPos == LCD_COL)

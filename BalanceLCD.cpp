@@ -272,9 +272,9 @@ void ShowInfo()
 	ClearLCD();
 	String FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);
 	String Calories = String(CategoryTable[Category].NutritionalTable[Food].Calories) + "kcal";
-	String Carb = "C:" + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
-	String Prot = "P:" + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
-	String Fats = "G:" + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";
+	String Carb = "C: " + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
+	String Prot = "P: " + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
+	String Fats = "G: " + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";
 	String CategoryName = String(CategoryTable[Category].CategoryName);
 	LCDPrintString(ONE, CENTER_ALIGN, "Valori in 100g di:");
 	while(!ExitShowInfo)
@@ -282,9 +282,9 @@ void ShowInfo()
 		FoodMaxItem = *CategoryTable[Category].TableSizeArray;
 		FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);
 		Calories = String(CategoryTable[Category].NutritionalTable[Food].Calories) + "kcal";
-		Carb = "C:" + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
-		Prot = "P:" + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
-		Fats = "G:" + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";	
+		Carb = "C: " + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
+		Prot = "P: " + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
+		Fats = "G: " + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";	
 		LCDPrintString(TWO, CENTER_ALIGN, FoodName);
 		LCDPrintString(THREE, LEFT_ALIGN, Calories);
 		LCDPrintString(THREE, RIGHT_ALIGN, Carb);
@@ -430,12 +430,12 @@ void CompleteLaunch()
 			LCDPrintString(ONE, CENTER_ALIGN, "Scegli il target");
 			LCDPrintString(TWO, CENTER_ALIGN, "di calorie del tuo");
 			LCDPrintString(THREE, CENTER_ALIGN, "pasto:");
-			LCDPrintString(FOUR, CENTER_ALIGN, String(CaloriesTarget));
+			LCDPrintString(FOUR, CENTER_ALIGN, String(CaloriesTarget) + "kcal");
 		}
 		if(Dishes)
 		{
 			LCDPrintString(ONE, CENTER_ALIGN, "Scegli il numero");
-			LCDPrintString(TWO, CENTER_ALIGN, "di piatti ");
+			LCDPrintString(TWO, CENTER_ALIGN, "di piatti");
 			LCDPrintString(THREE, CENTER_ALIGN, "del tuo pasto:");
 			LCDPrintString(FOUR, CENTER_ALIGN, String(DishesNumber));			
 		}
@@ -500,12 +500,12 @@ void CompleteLaunch()
 		LCDPrintString(ONE, CENTER_ALIGN, "Piatto "+ String(DishesNumber));
 		LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
 		Wait(THREE, false);
-		if(FoodChoiceMenu)
+		if(FoodChoiceMenu())
 		{
 			ShowMeasure();
 			ClearLCD();
 			LCDPrintString(ONE, CENTER_ALIGN, "Calorie rimanenti:");
-			LCDPrintString(TWO, CENTER_ALIGN, String(Diff));
+			LCDPrintString(TWO, CENTER_ALIGN, String(Diff) + "kcal");
 			LCDPrintString(THREE, CENTER_ALIGN, "Per continuare");
 			Wait(FOUR, false);
 		}
