@@ -108,6 +108,9 @@ void loop()
 				ShowInfo();
 			}
 			break;
+		case COMPLETE_LAUNCH_FUNCTION:
+			LaunchMenu();
+			break;
 		case PREFERENCE_1_FUNCTION:
 			if(CheckPreference(PREFERENCE_1))
 				ShowMeasure();

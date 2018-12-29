@@ -84,6 +84,19 @@ String MenuTitle[] =
 	"Calibrazione",
 };
 
+enum
+{
+	PER_CALORIE = 0,
+	// PER_MACROS,
+	MAX_LAUNCH_CHOICE	
+};
+
+String LaunchMenuStr[] =
+{
+	"Per calorie",
+	// "Per macros",	
+};
+
 void PreferenceInit()
 {
 	for(uint8_t PrefIndex = 0; PrefIndex < MAX_PREFERENCE; PrefIndex++)
@@ -413,9 +426,207 @@ bool CheckPreference(uint8_t PreferenceChoice)
 	return Checked;
 }
 
+static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, uint8_t FirstListItem)
+{
+	uint8_t Aux = 0;
+	for(uint8_t MenuIndx = 0; MenuIndx < MAX_LCD_LINE_MENU; MenuIndx++)
+	{
+		Aux = FirstListItem + MenuIndx;
+		if(Aux >= MaxItem)
+			break;
+		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
+	}
+	LCDMoveCursor(ItemPos, 0);
+	LCDShowIcon(TO_RIGHT_ARROW);	
+}
 
 
-void CompleteLaunch()
+void LaunchMenu()
+{
+	uint8_t ButtonPress = NO_PRESS;
+	uint8_t ArrowPos = 1, OldArrowPos = 1;
+	uint8_t TopItem = 0;
+	bool ExitLaunchMenuChoice = false;
+	uint8_t FunctionChoice = 0;
+	ClearLCD();
+	LCDPrintString(ONE, CENTER_ALIGN, "Scegli il calcolo");
+	while(!ExitLaunchMenuChoice)
+	{
+		RefreshMenuChoice(LaunchMenuStr, MAX_LAUNCH_CHOICE, ArrowPos, TopItem);
+		CheckEvent();
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
+		{
+			case EXIT:
+				break;
+			case UP:
+				if(FunctionChoice > 0)
+					FunctionChoice--;
+				else
+					FunctionChoice = MAX_LAUNCH_CHOICE - 1;
+				break;
+			case DOWN:
+				if(FunctionChoice < MAX_LAUNCH_CHOICE - 1)
+					FunctionChoice++;
+				else
+					FunctionChoice = 0;
+				break;
+			case OK_TARE:
+				CompleteLaunchCalories();
+				ExitLaunchMenuChoice = true;
+				break;
+			default:
+				break;			
+			
+		}
+		if(FunctionChoice < MAX_LCD_LINE_MENU)
+		{
+			TopItem = 0;
+			ArrowPos = FunctionChoice  + 1;
+			if(OldArrowPos != ArrowPos)
+			{
+				ClearChar(OldArrowPos, 0);
+				OldArrowPos = ArrowPos;
+			}
+		}
+		else
+		{
+			TopItem = FunctionChoice - MAX_LCD_LINE_MENU + 1;
+			ArrowPos = MAX_LCD_LINE_MENU;
+			if(OldArrowPos != ArrowPos)
+			{
+				ClearChar(OldArrowPos, 0);
+				OldArrowPos = ArrowPos;
+			}
+		}
+		delay(30);
+	}	
+	
+	
+}
+
+
+// void CompleteLaunchMacros()
+// {
+	// uint8_t ButtonPress = NO_PRESS;
+	// uint16_t CaloriesTarget = 0;
+	// uint8_t DishesNumber = 0, DishIndex = 0;
+	// bool ChoiceTargetAndDishes = false, Target = true, Dishes = false;
+	// ClearLCD();
+	// while(!ChoiceTargetAndDishes)
+	// {
+		// if(Target)
+		// {
+			// LCDPrintString(ONE, CENTER_ALIGN, "Scegli il target");
+			// LCDPrintString(TWO, CENTER_ALIGN, "di calorie del tuo");
+			// LCDPrintString(THREE, CENTER_ALIGN, "pasto:");
+			// LCDPrintString(FOUR, CENTER_ALIGN, String(CaloriesTarget) + "kcal");
+		// }
+		// if(Dishes)
+		// {
+			// LCDPrintString(ONE, CENTER_ALIGN, "Scegli il numero");
+			// LCDPrintString(TWO, CENTER_ALIGN, "di piatti");
+			// LCDPrintString(THREE, CENTER_ALIGN, "del tuo pasto:");
+			// LCDPrintString(FOUR, CENTER_ALIGN, String(DishesNumber));			
+		// }
+		// ButtonPress = KeyPressed();
+		// switch(ButtonPress)
+		// {
+			// case UP:
+				// if(Target)
+				// {
+					// if(CaloriesTarget > 0)
+						// CaloriesTarget -= 10;
+					// else
+						// CaloriesTarget = 10000;
+				// }
+				// if(Dishes)
+				// {
+					// if(DishesNumber > 0)
+						// DishesNumber--;
+					// else
+						// DishesNumber = 10;
+				// }
+				// break;
+			// case DOWN:
+				// if(Target)
+				// {
+					// if(CaloriesTarget < 10000)
+						// CaloriesTarget += 10;
+					// else
+						// CaloriesTarget = 0;
+				// }
+				// if(Dishes)
+				// {
+					// if(DishesNumber < 10)
+						// DishesNumber++;
+					// else
+						// DishesNumber = 0;
+				// }
+				// break;
+			// case OK_TARE:
+				// if(Target)
+				// {
+					// Target = false;
+					// Dishes = true;
+				// }
+				// else if(Dishes)
+				// {
+					// ChoiceTargetAndDishes = true;
+				// }
+				// break;
+			// case EXIT:
+				// return;
+				// break;
+			// default:
+				// break;
+		// }
+		// delay(50);
+	// }
+	// for(DishIndex = 1; DishIndex <= DishesNumber; DishesNumber++)
+	// {
+		// int32_t Diff = CaloriesTarget - CaloriesReached;
+		// ClearLCD();
+		// LCDPrintString(ONE, CENTER_ALIGN, "Piatto "+ String(DishesNumber));
+		// LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
+		// Wait(THREE, false);
+		// if(FoodChoiceMenu())
+		// {
+			// ShowMeasure();
+			// ClearLCD();
+			// LCDPrintString(ONE, CENTER_ALIGN, "Calorie rimanenti:");
+			// LCDPrintString(TWO, CENTER_ALIGN, String(Diff) + "kcal");
+			// LCDPrintString(THREE, CENTER_ALIGN, "Per continuare");
+			// Wait(FOUR, false);
+		// }
+		// else
+			// continue;
+		// if(Diff <= 0)
+		// {
+			// ClearLCD();
+			// LCDPrintString(ONE, CENTER_ALIGN, "Calorie target");
+			// LCDPrintString(TWO, CENTER_ALIGN, "raggiunte!");	
+			// delay(1500);
+			// if(Diff < 0)
+			// {
+				// Diff = -Diff;
+				// ClearLCD();
+				// LCDPrintString(ONE, CENTER_ALIGN, "Superato il target");
+				// LCDPrintString(TWO, CENTER_ALIGN, "di:");	
+				// LCDPrintString(THREE, CENTER_ALIGN, String(Diff) + "kcal");	
+				// delay(1500);		
+			// }
+			// ClearLCD();
+			// break;
+		// }	
+	// }
+	// CaloriesReached = 0;
+	// Flags.LaunchMode = false;
+	// return;
+// }
+
+
+void CompleteLaunchCalories()
 {
 	uint8_t ButtonPress = NO_PRESS;
 	uint16_t CaloriesTarget = 0;
@@ -535,21 +746,6 @@ void CompleteLaunch()
 	return;
 }
 
-
-
-static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, uint8_t FirstListItem)
-{
-	uint8_t Aux = 0;
-	for(uint8_t MenuIndx = 0; MenuIndx < MAX_LCD_LINE_MENU; MenuIndx++)
-	{
-		Aux = FirstListItem + MenuIndx;
-		if(Aux >= MaxItem)
-			break;
-		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
-	}
-	LCDMoveCursor(ItemPos, 0);
-	LCDShowIcon(TO_RIGHT_ARROW);	
-}
 
 MAIN_FUNCTIONS MenuChoice()
 {
