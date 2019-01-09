@@ -34,6 +34,7 @@ void BalanceSetup()
 		{
 			EEPROMUpdate(FoodPreference[PrefIndex].CategoryAddr, INVALID_EEPROM_VALUE);
 			EEPROMUpdate(FoodPreference[PrefIndex].FoodAddr, INVALID_EEPROM_VALUE);
+			yield();
 		}	
 		LCDPrintString(ONE, CENTER_ALIGN, "Inizializzo la");
 		LCDPrintString(TWO, CENTER_ALIGN, "bilancia, attendere");
@@ -109,7 +110,7 @@ void Calibration()
 			default:
 				break;		
 		}
-		delay(200);
+		yield();
 	}
 }
 
@@ -118,7 +119,7 @@ void AutoCalibration()
 	uint16_t WeightTarget = 0;
 	String WeightTargetStr;
 	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 100;
-	float CalibrationFactor = 500.0, ReadedWeight = 0.0;
+	float CalibrationFactor = 1.0, ReadedWeight = 0.0;
 	bool ExitSetWeightTarget = false;
 	ClearLCD();
 	while(!ExitSetWeightTarget)
@@ -133,12 +134,12 @@ void AutoCalibration()
 		{
 			case UP:
 				if(WeightTarget > 0)
-					WeightTarget -= 10;
+					WeightTarget--;
 				else
 					WeightTarget = 5000;
 			case DOWN:
 				if(WeightTarget < 5000)
-					WeightTarget += 10;
+					WeightTarget++;
 				else
 					WeightTarget = 0;
 				break;
@@ -150,21 +151,38 @@ void AutoCalibration()
 			default:
 				break;		
 		}
-		delay(30);	
+		yield();	
 	}
 	ClearLCD();
+	LCDPrintString(ONE, CENTER_ALIGN, "Lasciare la bilancia");
+	LCDPrintString(TWO, CENTER_ALIGN, "vuota");
+	ResetScale(); // Reset the balace scale
+	ResetTare(); //Reset the scale to 0
+	delay(1000);
+	ClearLCD();
+	LCDPrintString(ONE, CENTER_ALIGN, "Mettere il peso");
+	LCDPrintString(TWO, CENTER_ALIGN, "target sulla");
+	LCDPrintString(THREE, CENTER_ALIGN, "bilancia");
+	Wait(FOUR, false);
+	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Sto calibrando");
-	scale.set_scale();
-	scale.tare(); //Reset the scale to 0
 	while(1)
 	{
-		scale.set_scale(CalibrationFactor);
-		ReadedWeight = round(scale.get_units(10));
-		if((uint16_t)ReadedWeight > WeightTarget)
-			CalibrationFactor--;
-		else if((uint16_t)ReadedWeight < WeightTarget)
-			CalibrationFactor++;
-		else if((uint16_t)ReadedWeight == WeightTarget)
+		SetScale(CalibrationFactor);
+		ReadedWeight = roundf(scale.get_units(10));
+		if(ReadedWeight > (float)WeightTarget)
+		{
+			CalibrationFactor -= 0.1;
+			if(CalibrationFactor == 0)
+				CalibrationFactor = -0.1;
+		}
+		else if(ReadedWeight < (float)WeightTarget)
+		{
+			CalibrationFactor += 0.1;
+			if(CalibrationFactor == 0)
+				CalibrationFactor = 0.1;
+		}
+		else if(ReadedWeight == (float)WeightTarget)
 			break;
 		TimerPoint--;
 		if(TimerPoint == 0)
@@ -197,4 +215,19 @@ float GetWeight()
 void SetTare()
 {
 	scale.tare(5);
+}
+
+void SetScale(float NewScale)
+{
+	scale.set_scale(NewScale);
+}
+
+void ResetTare()
+{
+	scale.tare();
+}
+
+void ResetScale()
+{
+	scale.set_scale();
 }

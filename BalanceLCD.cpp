@@ -104,6 +104,7 @@ void PreferenceInit()
 		FoodPreference[PrefIndex].CategoryValue = EEPROM.read(FoodPreference[PrefIndex].CategoryAddr);
 		FoodPreference[PrefIndex].FoodValue = EEPROM.read(FoodPreference[PrefIndex].FoodAddr);
 	}	
+	yield();
 }
 
 
@@ -198,7 +199,7 @@ bool FoodChoiceMenu()
 				default:
 					break;
 			}
-			delay(30);
+			yield();
 		}
 	}
 	else
@@ -272,7 +273,7 @@ void ShowMeasure()
 				break;
 		}
 		OldWeight = Weight;
-		delay(30);
+		yield();
 	}
 }
 
@@ -346,7 +347,7 @@ void ShowInfo()
 			default:
 				break;		
 		}
-		delay(30);
+		yield();
 	}
 }
 
@@ -435,6 +436,7 @@ static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, u
 		if(Aux >= MaxItem)
 			break;
 		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
+		yield();
 	}
 	LCDMoveCursor(ItemPos, 0);
 	LCDShowIcon(TO_RIGHT_ARROW);	
@@ -499,10 +501,8 @@ void LaunchMenu()
 				OldArrowPos = ArrowPos;
 			}
 		}
-		delay(30);
+		yield();
 	}	
-	
-	
 }
 
 
@@ -702,7 +702,7 @@ void CompleteLaunchCalories()
 			default:
 				break;
 		}
-		delay(50);
+		yield();
 	}
 	for(DishIndex = 1; DishIndex <= DishesNumber; DishesNumber++)
 	{
@@ -711,6 +711,8 @@ void CompleteLaunchCalories()
 		LCDPrintString(ONE, CENTER_ALIGN, "Piatto "+ String(DishesNumber));
 		LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
 		Wait(THREE, false);
+		CategoryChoice = MAX_CATEGORY;
+		FoodChoice = MAX_FOOD;
 		if(FoodChoiceMenu())
 		{
 			ShowMeasure();
@@ -740,6 +742,7 @@ void CompleteLaunchCalories()
 			ClearLCD();
 			break;
 		}	
+		yield();
 	}
 	CaloriesReached = 0;
 	Flags.LaunchMode = false;
@@ -810,7 +813,7 @@ MAIN_FUNCTIONS MenuChoice()
 				OldArrowPos = ArrowPos;
 			}
 		}
-		delay(30);
+		yield();
 	}
 	return (MAIN_FUNCTIONS)FunctionChoice;
 }
@@ -861,7 +864,7 @@ bool CheckYesNo()
 				break;
 		}
 		ButtonPress = NO_PRESS;
-		delay(30);
+		yield();
 	}
 	return Choice;
 }

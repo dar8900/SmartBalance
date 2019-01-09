@@ -21,5 +21,7 @@ void Calibration(void);
 void BalanceSetup(void);
 float GetWeight(void);
 void SetTare(void);
-
+void SetScale(float NewScale);
+void ResetTare(void);
+void ResetScale(void);
 #endif

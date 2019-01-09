@@ -828,6 +828,7 @@ void FillNutritionalTableSizeArray()
 	for(TableIndx = 0; TableIndx < MAX_CATEGORIES; TableIndx++)
 	{		
 		NutritionalTableSizes[TableIndx] = (sizeof(CategoryTable[TableIndx].NutritionalTable)/sizeof(NUTRITIONAL_VALUES));
+		yield();
 	}	
 }
 

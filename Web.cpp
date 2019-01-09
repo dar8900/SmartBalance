@@ -38,6 +38,7 @@ static void BuildCategoryFoodHtml()
 		Option += String(i+1) + "\">";
 		Option += String(CategoryTable[i].CategoryName);
 		Option += "</option>";
+		yield();
 	}
 	HomePage += Option + "</select><br><br>";
 	HomePage += "<input type=\"submit\" value=\"Scegli categoria\"></form>";
@@ -96,6 +97,7 @@ static uint8_t SearchCategoryNumber(String CategoryName)
 	{
 		if(CategoryName == String(CategoryTable[i].CategoryName))
 			break;
+		yield();
 	}
 	return i;
 }
@@ -111,6 +113,7 @@ static int16_t SearchFoodNumber(String Food, NUTRITIONAL_VALUES *NutritionalTabl
 			Found = true;
 			break;
 		}
+		yield();
 	}
 	if(Found)
 		return FoodIndex;

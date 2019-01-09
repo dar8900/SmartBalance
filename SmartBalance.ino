@@ -82,6 +82,10 @@ void setup()
 	LCDCreateIcon(DownArrow, DOWN_ARROW);
 	LCDCreateIcon(ToRightArrow, TO_RIGHT_ARROW);
 	LCDCreateIcon(ToLeftArrow, TO_LEFT_ARROW);
+	ClearLCD();
+	LCDPrintString(TWO, CENTER_ALIGN, "Home Microtech");
+	delay(1000);
+	ClearLCD();
 	Wait(TWO, true);
 	BalanceSetup();
 	FillNutritionalTableSizeArray();
@@ -129,7 +133,13 @@ void loop()
 			break;
 		case CALIBRATION_FUNCTION:
 			EEPROMUpdate(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
-			delay(100);
+			ClearLCD();
+			LCDPrintString(ONE, CENTER_ALIGN, "Passaggio alla");
+			LCDPrintString(TWO, CENTER_ALIGN, "calibrazione");
+			delay(1000);
+			ClearLCD();
+			LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
+			delay(1000);
 			ESP.restart();	
 		default:
 			break;		
