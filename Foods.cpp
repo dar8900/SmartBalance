@@ -836,7 +836,7 @@ void FillNutritionalTableSizeArray()
 static uint16_t CalcCalories(float Weight, uint8_t Category, uint8_t Food)
 {
 	uint16_t CaloriesCalculated = 0, Calories100g = CategoryTable[Category].NutritionalTable[Food].Calories;
-	CaloriesCalculated = (uint16_t)((Weight * (float)Calories100g) / 0.100);
+	CaloriesCalculated = (uint16_t)((Weight * (float)Calories100g) / 100);
 	return CaloriesCalculated;
 }
 
@@ -844,21 +844,21 @@ static uint16_t CalcCarbs(float Weight, uint8_t Category, uint8_t Food)
 {
 	uint16_t CarbsCalculated = 0;
 	float Carbs100g = CategoryTable[Category].NutritionalTable[Food].Carbs;
-	CarbsCalculated = (uint16_t)((Weight * Carbs100g) / 0.100);
+	CarbsCalculated = (uint16_t)((Weight * Carbs100g) / 100);
 	return CarbsCalculated;
 }
 static uint16_t CalcProt(float Weight, uint8_t Category, uint8_t Food)
 {
 	uint16_t ProtCalculated = 0;
 	float Prot100g = CategoryTable[Category].NutritionalTable[Food].Prot;
-	ProtCalculated = (uint16_t)((Weight * Prot100g) / 0.100);
+	ProtCalculated = (uint16_t)((Weight * Prot100g) / 100);
 	return ProtCalculated;
 }
 static uint16_t CalcFats(float Weight, uint8_t Category, uint8_t Food)
 {
 	uint16_t FatsCalculated = 0;
 	float Fats100g = CategoryTable[Category].NutritionalTable[Food].Fats;
-	FatsCalculated = (uint16_t)((Weight * Fats100g) / 0.100);
+	FatsCalculated = (uint16_t)((Weight * Fats100g) / 100);
 	return FatsCalculated;
 }
 
