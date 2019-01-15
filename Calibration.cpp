@@ -29,11 +29,11 @@ void BalanceSetup()
 	if(BalanceMode != CALIBRATION_MODE && BalanceMode != NORMAL_MODE)
 	{
 		ClearLCD();
-		EEPROMUpdate(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
+		EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
 		for(uint8_t PrefIndex = 0; PrefIndex < MAX_PREFERENCE; PrefIndex++)
 		{
-			EEPROMUpdate(FoodPreference[PrefIndex].CategoryAddr, INVALID_EEPROM_VALUE);
-			EEPROMUpdate(FoodPreference[PrefIndex].FoodAddr, INVALID_EEPROM_VALUE);
+			EEPROM.write(FoodPreference[PrefIndex].CategoryAddr, INVALID_EEPROM_VALUE);
+			EEPROM.write(FoodPreference[PrefIndex].FoodAddr, INVALID_EEPROM_VALUE);
 			yield();
 		}	
 		LCDPrintString(ONE, CENTER_ALIGN, "Inizializzo la");
@@ -42,6 +42,7 @@ void BalanceSetup()
 		ClearLCD();
 		LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
 		delay(1500);
+		EEPROM.commit();
 		ESP.restart();
 	}
 	if(BalanceMode == CALIBRATION_MODE)
@@ -52,12 +53,13 @@ void BalanceSetup()
 		delay(1500);
 		ClearLCD();
 		AutoCalibration();
-		EEPROMUpdate(CALIBRATION_MODE_ADDR, NORMAL_MODE);
+		EEPROM.write(CALIBRATION_MODE_ADDR, NORMAL_MODE);
 		delay(100);
 		ClearLCD();
 		LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
 		delay(1500);
 		ClearLCD();
+		EEPROM.commit();
 		ESP.restart();		
 	}
 	if(BalanceMode == NORMAL_MODE)
@@ -65,62 +67,63 @@ void BalanceSetup()
 		EEPROM.get(CALIBRATION_ADDR, CalibrationValue);
 		scale.set_scale(CalibrationValue);
 		scale.tare(5); //Reset the scale to 0
-		delay(1000);
+		delay(500);
 	}	
 }
 
-void Calibration()
-{
-	float calibration_factor = 500; // this calibration factor is adjusted according to my load cell
-	scale.set_scale();
-	scale.tare(); //Reset the scale to 0
-	String ValueUnit;
-	long zero_factor = scale.read_average();
-	uint8_t ButtonPress = NO_PRESS;
-	bool ExitCalibration = false;
-	ClearLCD();
-	while(!ExitCalibration)
-	{
-		scale.set_scale(calibration_factor); //Adjust to this calibration factor
-		LCDPrintString(TWO, LEFT_ALIGN, "Peso:");
-		ValueUnit = String(scale.get_units(10), 3) + "g";
-		LCDPrintString(TWO, RIGHT_ALIGN, ValueUnit);
-		LCDPrintString(THREE, LEFT_ALIGN, "K fact:");
-		LCDPrintString(THREE, RIGHT_ALIGN, String(calibration_factor, 4));
-		ButtonPress = KeyPressed();
-		switch(ButtonPress)
-		{
-			case UP:
-				calibration_factor -= 1;
-				ClearLCD();
-				break;
-			case DOWN:
-				calibration_factor += 1;
-				ClearLCD();
-				break;
-			case OK_TARE:
-				calibration_factor += 10;
-				ClearLCD();				
-				break;
-			case EXIT:
-				ExitCalibration = true;
-				EEPROM.put(CALIBRATION_ADDR, calibration_factor);
-				EEPROM.commit();
-				break;
-			default:
-				break;		
-		}
-		yield();
-	}
-}
+// void Calibration()
+// {
+	// float calibration_factor = 500; // this calibration factor is adjusted according to my load cell
+	// scale.set_scale();
+	// scale.tare(); //Reset the scale to 0
+	// String ValueUnit;
+	// long zero_factor = scale.read_average();
+	// uint8_t ButtonPress = NO_PRESS;
+	// bool ExitCalibration = false;
+	// ClearLCD();
+	// while(!ExitCalibration)
+	// {
+		// scale.set_scale(calibration_factor); //Adjust to this calibration factor
+		// LCDPrintString(TWO, LEFT_ALIGN, "Peso:");
+		// ValueUnit = String(scale.get_units(10), 3) + "g";
+		// LCDPrintString(TWO, RIGHT_ALIGN, ValueUnit);
+		// LCDPrintString(THREE, LEFT_ALIGN, "K fact:");
+		// LCDPrintString(THREE, RIGHT_ALIGN, String(calibration_factor, 4));
+		// ButtonPress = KeyPressed();
+		// switch(ButtonPress)
+		// {
+			// case UP:
+				// calibration_factor -= 1;
+				// ClearLCD();
+				// break;
+			// case DOWN:
+				// calibration_factor += 1;
+				// ClearLCD();
+				// break;
+			// case OK_TARE:
+				// calibration_factor += 10;
+				// ClearLCD();				
+				// break;
+			// case EXIT:
+				// ExitCalibration = true;
+				// EEPROM.put(CALIBRATION_ADDR, calibration_factor);
+				// EEPROM.commit();
+				// break;
+			// default:
+				// break;		
+		// }
+		// yield();
+	// }
+// }
 
 void AutoCalibration()
 {
 	uint16_t WeightTarget = 0;
 	String WeightTargetStr;
-	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 100;
+	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 50;
 	float CalibrationFactor = 1.0, ReadedWeight = 0.0;
-	bool ExitSetWeightTarget = false;
+	bool ExitSetWeightTarget = false, ToggleValueView = false;
+	uint16_t TimeExec = 0;
 	ClearLCD();
 	while(!ExitSetWeightTarget)
 	{
@@ -155,14 +158,15 @@ void AutoCalibration()
 	}
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Lasciare la bilancia");
-	LCDPrintString(TWO, CENTER_ALIGN, "vuota");
+	LCDPrintString(TWO, CENTER_ALIGN, "vuota e");
+	Wait(THREE, false);
 	ResetScale(); // Reset the balace scale
 	ResetTare(); //Reset the scale to 0
 	delay(1000);
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Mettere il peso");
 	LCDPrintString(TWO, CENTER_ALIGN, "target sulla");
-	LCDPrintString(THREE, CENTER_ALIGN, "bilancia");
+	LCDPrintString(THREE, CENTER_ALIGN, "bilancia e");
 	Wait(FOUR, false);
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Sto calibrando");
@@ -172,22 +176,22 @@ void AutoCalibration()
 		ReadedWeight = roundf(scale.get_units(10));
 		if(ReadedWeight > (float)WeightTarget)
 		{
-			CalibrationFactor -= 0.1;
+			CalibrationFactor -= 1.0;
 			if(CalibrationFactor == 0)
-				CalibrationFactor = -0.1;
+				CalibrationFactor = -1.0;
 		}
 		else if(ReadedWeight < (float)WeightTarget)
 		{
-			CalibrationFactor += 0.1;
+			CalibrationFactor += 1.0;
 			if(CalibrationFactor == 0)
-				CalibrationFactor = 0.1;
+				CalibrationFactor = 1.0;
 		}
 		else if(ReadedWeight == (float)WeightTarget)
 			break;
 		TimerPoint--;
 		if(TimerPoint == 0)
 		{
-			TimerPoint = 100;
+			TimerPoint = 50;
 			LCDPrintString(TWO, PointPos, ".");
 			PointPos++;
 			if(PointPos == LCD_COL)
@@ -195,9 +199,19 @@ void AutoCalibration()
 				PointPos = 0;
 				ClearLCDLine(TWO);
 			}
-			LCDPrintString(FOUR, CENTER_ALIGN, String(ReadedWeight) + "g" + " --> " + String(WeightTarget) + "g");
+			TimeExec++;
+			LCDPrintString(THREE, CENTER_ALIGN, String(TimeExec) + "s");
+			if(!ToggleValueView)
+				LCDPrintString(FOUR, CENTER_ALIGN, String(ReadedWeight) + "g" + " --> " + String(WeightTarget) + "g");
+			else
+				LCDPrintString(FOUR, CENTER_ALIGN, String(CalibrationFactor) + " units");
+			if(!(TimeExec % 5))
+			{
+				ToggleValueView = !ToggleValueView;
+				ClearLCDLine(FOUR);
+			}
 		}
-		delay(10);
+		delay(20);
 	}
 	EEPROM.put(CALIBRATION_ADDR, CalibrationFactor);
 	EEPROM.commit();

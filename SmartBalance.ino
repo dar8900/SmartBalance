@@ -32,14 +32,14 @@ void CheckEvent()
 
 
 
-void EEPROMUpdate(uint8_t Addr, uint8_t Value)
-{
-	if(EEPROM.read(Addr) != Value)
-	{
-		EEPROM.write(Addr, Value);
-		EEPROM.commit();
-	}
-}
+// void EEPROM.write(uint8_t Addr, uint8_t Value)
+// {
+	// if(EEPROM.read(Addr) != Value)
+	// {
+		// EEPROM.write(Addr, Value);
+		// EEPROM.commit();
+	// }
+// }
 
 void Wait(uint8_t Row, bool Clear)
 {
@@ -63,7 +63,7 @@ void Wait(uint8_t Row, bool Clear)
 			default:
 				break;
 		}
-		delay(50);
+		yield();
 	}
 	ClearLCD();
 }
@@ -132,7 +132,7 @@ void loop()
 				ShowMeasure();
 			break;
 		case CALIBRATION_FUNCTION:
-			EEPROMUpdate(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
+			EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
 			ClearLCD();
 			LCDPrintString(ONE, CENTER_ALIGN, "Passaggio alla");
 			LCDPrintString(TWO, CENTER_ALIGN, "calibrazione");
@@ -140,8 +140,10 @@ void loop()
 			ClearLCD();
 			LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
 			delay(1000);
+			EEPROM.commit();
 			ESP.restart();	
 		default:
 			break;		
 	}
+	yield();
 }

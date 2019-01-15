@@ -372,8 +372,9 @@ bool CheckPreference(uint8_t PreferenceChoice)
 			{
 				// FoodPreference[PreferenceChoice].CategoryValue = CategoryChoice;
 				// FoodPreference[PreferenceChoice].FoodValue = FoodChoice;
-				EEPROMUpdate(FoodPreference[PreferenceChoice].CategoryAddr, CategoryChoice);
-				EEPROMUpdate(FoodPreference[PreferenceChoice].FoodAddr, FoodChoice);
+				EEPROM.write(FoodPreference[PreferenceChoice].CategoryAddr, CategoryChoice);
+				EEPROM.write(FoodPreference[PreferenceChoice].FoodAddr, FoodChoice);
+				EEPROM.commit();
 				ClearLCD();
 				LCDPrintString(TWO, CENTER_ALIGN, "Preferenza salvata");
 				delay(1500);
@@ -400,8 +401,9 @@ bool CheckPreference(uint8_t PreferenceChoice)
 			{
 				// FoodPreference[PreferenceChoice].CategoryValue = CategoryChoice;
 				// FoodPreference[PreferenceChoice].FoodValue = FoodChoice;
-				EEPROMUpdate(FoodPreference[PreferenceChoice].CategoryAddr, CategoryChoice);
-				EEPROMUpdate(FoodPreference[PreferenceChoice].FoodAddr, FoodChoice);
+				EEPROM.write(FoodPreference[PreferenceChoice].CategoryAddr, CategoryChoice);
+				EEPROM.write(FoodPreference[PreferenceChoice].FoodAddr, FoodChoice);
+				EEPROM.commit();
 				ClearLCD();
 				LCDPrintString(TWO, CENTER_ALIGN, "Preferenza salvata");
 				delay(1500);
