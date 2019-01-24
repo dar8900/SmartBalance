@@ -56,6 +56,7 @@ extern MAIN_FUNCTIONS WichFunction;
 void PreferenceInit(void);
 bool FoodChoiceMenu(void); 
 void LaunchMenu(void);
+void CompleteLaunchMacros(void);
 void CompleteLaunchCalories(void);
 void ShowMeasure(void);
 void ShowInfo(void);

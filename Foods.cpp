@@ -806,18 +806,18 @@ const NUTRITIONAL_VALUES NutritionalTableAlcol[] PROGMEM =
 };
 
 
-const NUTRITIONAL_CATEGORIES CategoryTable[] = 
+const NUTRITIONAL_CATEGORIES CategoryTable[MAX_CATEGORIES] = 
 {
-	{"Verdura"  		,NutritionalTableVegetables,     &NutritionalTableSizes[0]},
-	{"Frutta" 			,NutritionalTableFruits    ,     &NutritionalTableSizes[1]},
-	{"Pesce" 			,NutritionalTableFish      , 	 &NutritionalTableSizes[2]},
-	{"Latticini" 	    ,NutritionalTableCheese    ,	 &NutritionalTableSizes[3]},
-	{"Pasta" 			,NutritionalTablePasta     , 	 &NutritionalTableSizes[4]},
-	{"Pane e co." 		,NutritionalTableBread     , 	 &NutritionalTableSizes[5]},
-	{"Manzo"     		,NutritionalTableCow       ,     &NutritionalTableSizes[6]},
-	{"Maiale" 			,NutritionalTablePork      ,     &NutritionalTableSizes[7]},
-	{"Pollame" 	   		,NutritionalTableChiken    ,     &NutritionalTableSizes[8]},
-	{"Uova" 		 	,NutritionalTableEggs      ,     &NutritionalTableSizes[9]},
+	{"Verdura"  		,NutritionalTableVegetables,     &NutritionalTableSizes[0] },
+	{"Frutta" 			,NutritionalTableFruits    ,     &NutritionalTableSizes[1] },
+	{"Pesce" 			,NutritionalTableFish      , 	 &NutritionalTableSizes[2] },
+	{"Latticini" 	    ,NutritionalTableCheese    ,	 &NutritionalTableSizes[3] },
+	{"Pasta" 			,NutritionalTablePasta     , 	 &NutritionalTableSizes[4] },
+	{"Pane e co." 		,NutritionalTableBread     , 	 &NutritionalTableSizes[5] },
+	{"Manzo"     		,NutritionalTableCow       ,     &NutritionalTableSizes[6] },
+	{"Maiale" 			,NutritionalTablePork      ,     &NutritionalTableSizes[7] },
+	{"Pollame" 	   		,NutritionalTableChiken    ,     &NutritionalTableSizes[8] },
+	{"Uova" 		 	,NutritionalTableEggs      ,     &NutritionalTableSizes[9] },
 	{"Alcolici" 		,NutritionalTableAlcol     ,     &NutritionalTableSizes[10]},
 };
 
@@ -844,21 +844,21 @@ static uint16_t CalcCarbs(float Weight, uint8_t Category, uint8_t Food)
 {
 	uint16_t CarbsCalculated = 0;
 	float Carbs100g = CategoryTable[Category].NutritionalTable[Food].Carbs;
-	CarbsCalculated = (uint16_t)((Weight * Carbs100g) / 100);
+	CarbsCalculated = (uint16_t)roundf((Weight * Carbs100g) / 100);
 	return CarbsCalculated;
 }
 static uint16_t CalcProt(float Weight, uint8_t Category, uint8_t Food)
 {
 	uint16_t ProtCalculated = 0;
 	float Prot100g = CategoryTable[Category].NutritionalTable[Food].Prot;
-	ProtCalculated = (uint16_t)((Weight * Prot100g) / 100);
+	ProtCalculated = (uint16_t)roundf((Weight * Prot100g) / 100);
 	return ProtCalculated;
 }
 static uint16_t CalcFats(float Weight, uint8_t Category, uint8_t Food)
 {
 	uint16_t FatsCalculated = 0;
 	float Fats100g = CategoryTable[Category].NutritionalTable[Food].Fats;
-	FatsCalculated = (uint16_t)((Weight * Fats100g) / 100);
+	FatsCalculated = (uint16_t)roundf((Weight * Fats100g) / 100);
 	return FatsCalculated;
 }
 

@@ -15,7 +15,8 @@ typedef struct
 {
 	bool ClientConnected;
 	bool CategoryModified;	
-	bool LaunchMode;
+	bool LaunchModeCal;
+	bool LaunchModeMacro;
 }SYSTEM_FLAGS;
 
 extern SYSTEM_FLAGS Flags;

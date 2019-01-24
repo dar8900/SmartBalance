@@ -223,7 +223,7 @@ void AutoCalibration()
 
 float GetWeight()
 {
-	return scale.get_units(5);	// In kg
+	return scale.get_units(5);	// In g
 }
 
 void SetTare()
