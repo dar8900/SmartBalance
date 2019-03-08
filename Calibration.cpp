@@ -11,7 +11,7 @@
 #include "HX711.h"
 #include <EEPROM.h>
 #include "EepromAddr.h"
-#include "LCDLib.h"
+#include <LCDLib.h>
 #include "Keyboard.h"
 #include "SmartBalance.h"
 #include "BalanceLCD.h"

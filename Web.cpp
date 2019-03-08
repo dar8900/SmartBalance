@@ -4,7 +4,7 @@
 #include <ESP8266mDNS.h>
 #include <EEPROM.h>
 #include "BalanceLCD.h"
-#include "LCDLib.h"
+#include <LCDLib.h>
 #include "Keyboard.h"
 #include "Foods.h"
 #include "Calibration.h"

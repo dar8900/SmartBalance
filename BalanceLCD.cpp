@@ -1,5 +1,5 @@
 #include "BalanceLCD.h"
-#include "LCDLib.h"
+#include <LCDLib.h>
 #include "Keyboard.h"
 #include "Foods.h"
 #include "Calibration.h"
@@ -469,8 +469,8 @@ static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, u
 		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
 		yield();
 	}
-	LCDMoveCursor(ItemPos, 0);
-	LCDShowIcon(TO_RIGHT_ARROW);	
+
+	LCDShowIcon(TO_RIGHT_ARROW, ItemPos, 0);	
 }
 
 
