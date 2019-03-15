@@ -68,7 +68,7 @@ void WebServerInit()
 			LCDPrintString(ONE, CENTER_ALIGN, "Nome Web:");
 			LCDPrintString(TWO, CENTER_ALIGN, "http://SB01.local");
 			LCDPrintString(THREE, LEFT_ALIGN, "IP:");
-			LCDPrintString(THREE, RIGHT_ALIGN, String(WiFi.softAPIP()));
+			LCDPrintString(THREE, RIGHT_ALIGN, String(WiFi.softAPIP()[0]) + "." + String(WiFi.softAPIP()[1]) + "." + String(WiFi.softAPIP()[2]) + "." + String(WiFi.softAPIP()[3]));
 			LCDPrintString(FOUR, LEFT_ALIGN, "SSID:");
 			LCDPrintString(FOUR, RIGHT_ALIGN, String(ssid));
 		} 
@@ -76,7 +76,7 @@ void WebServerInit()
 		{
 
 			LCDPrintString(TWO, LEFT_ALIGN, "IP:");
-			LCDPrintString(TWO, RIGHT_ALIGN, String(WiFi.softAPIP()));
+			LCDPrintString(TWO, RIGHT_ALIGN, String(WiFi.softAPIP()[0]) + "." + String(WiFi.softAPIP()[1]) + "." + String(WiFi.softAPIP()[2]) + "." + String(WiFi.softAPIP()[3]));
 			LCDPrintString(THREE, LEFT_ALIGN, "SSID:");
 			LCDPrintString(THREE, RIGHT_ALIGN, String(ssid));
 		}
