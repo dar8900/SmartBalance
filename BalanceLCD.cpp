@@ -120,8 +120,9 @@ void PreferenceInit()
 	{
 		FoodPreference[PrefIndex].CategoryValue = EEPROM.read(FoodPreference[PrefIndex].CategoryAddr);
 		FoodPreference[PrefIndex].FoodValue = EEPROM.read(FoodPreference[PrefIndex].FoodAddr);
+		yield();
 	}	
-	yield();
+	
 }
 
 
@@ -144,7 +145,7 @@ bool FoodChoiceMenu()
 			{
 				LCDPrintString(ONE, CENTER_ALIGN, String(CategoryTable[Category].CategoryName));
 				LCDPrintString(TWO, CENTER_ALIGN, String(CategoryTable[Category].NutritionalTable[Food].FoodName));
-				FoodMaxItem = *CategoryTable[Category].TableSizeArray;
+				FoodMaxItem = CategoryTable[Category].TableSizeArray;
 				NumItem = String(Food + 1) + "/" + String(FoodMaxItem);
 				LCDPrintString(FOUR, CENTER_ALIGN, NumItem);
 			}
@@ -230,7 +231,7 @@ void ShowMeasure()
 {
 	uint8_t ButtonPress = NO_PRESS;
 	float Weight = 0.0, OldWeight = 0.0;
-	uint16_t Food = FoodChoice, FoodItemMax = *CategoryTable[CategoryChoice].TableSizeArray, Calories = 0;
+	uint16_t Food = FoodChoice, FoodItemMax = CategoryTable[CategoryChoice].TableSizeArray, Calories = 0;
 	uint16_t Carbs = 0, Protein = 0, Fats = 0;
 	bool ExitShowMeasure = false;
 	char Values[5];
@@ -322,7 +323,7 @@ void ShowInfo()
 	LCDPrintString(ONE, CENTER_ALIGN, "Valori in 100g di:");
 	while(!ExitShowInfo)
 	{
-		FoodMaxItem = *CategoryTable[Category].TableSizeArray;
+		FoodMaxItem = CategoryTable[Category].TableSizeArray;
 		FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);
 		Calories = String(CategoryTable[Category].NutritionalTable[Food].Calories) + "kcal";
 		Carb = "C: " + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";

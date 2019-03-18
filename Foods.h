@@ -21,7 +21,7 @@ typedef struct
 {
 	const char *CategoryName;
 	const NUTRITIONAL_VALUES *NutritionalTable;
-	const uint16_t *TableSizeArray;
+	const uint16_t TableSizeArray;
 }NUTRITIONAL_CATEGORIES;
 
 typedef enum
@@ -50,5 +50,5 @@ extern const NUTRITIONAL_CATEGORIES CategoryTable[];
 void CalcNutritionalValues(float Weight, uint8_t Category, uint8_t Food, 
 							uint16_t *Calories, uint16_t *Carbs, uint16_t *Prot, 
 							uint16_t *Fats);
-void FillNutritionalTableSizeArray(void);
+// void FillNutritionalTableSizeArray(void);
 #endif
