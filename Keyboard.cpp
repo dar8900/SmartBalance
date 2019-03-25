@@ -31,7 +31,7 @@ uint8_t KeyPressed()
 		}
 		else
 			WichPressed = NO_PRESS;
-		yield();
+		delay(25);
 	}
 	return WichPressed;
 }

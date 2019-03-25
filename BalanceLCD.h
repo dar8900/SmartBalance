@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <stdint.h>
 
+#define MAX_LCD_CHARS	20
+
 enum
 {
 	UP_ARROW = 0,

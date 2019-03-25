@@ -34,7 +34,7 @@ void BalanceSetup()
 		{
 			EEPROM.write(FoodPreference[PrefIndex].CategoryAddr, INVALID_EEPROM_VALUE);
 			EEPROM.write(FoodPreference[PrefIndex].FoodAddr, INVALID_EEPROM_VALUE);
-			yield();
+			delay(10);
 		}	
 		LCDPrintString(ONE, CENTER_ALIGN, "Inizializzo la");
 		LCDPrintString(TWO, CENTER_ALIGN, "bilancia, attendere");
@@ -119,7 +119,7 @@ void BalanceSetup()
 void AutoCalibration()
 {
 	uint16_t WeightTarget = 0;
-	String WeightTargetStr;
+	char PrintStr[21];
 	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 50;
 	float CalibrationFactor = 1.0, ReadedWeight = 0.0;
 	bool ExitSetWeightTarget = false, ToggleValueView = false;
@@ -129,8 +129,8 @@ void AutoCalibration()
 	{
 		LCDPrintString(ONE, CENTER_ALIGN, "Inserire il");
 		LCDPrintString(TWO, CENTER_ALIGN, "peso target:");
-		WeightTargetStr = String(WeightTarget) + "g";
-		LCDPrintString(THREE, CENTER_ALIGN, WeightTargetStr);
+		snprintf(PrintStr, 20, "%dg", WeightTarget);
+		LCDPrintString(THREE, CENTER_ALIGN, PrintStr);
 		LCDPrintString(FOUR, CENTER_ALIGN, "Premere su, giu, ok");
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
@@ -154,7 +154,7 @@ void AutoCalibration()
 			default:
 				break;		
 		}
-		yield();	
+		delay(250);	
 	}
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Lasciare la bilancia");
@@ -200,11 +200,14 @@ void AutoCalibration()
 				ClearLCDLine(TWO);
 			}
 			TimeExec++;
-			LCDPrintString(THREE, CENTER_ALIGN, String(TimeExec) + "s");
+			snprintf(PrintStr, 20, "%ds", TimeExec);
+			LCDPrintString(THREE, CENTER_ALIGN, PrintStr);
 			if(!ToggleValueView)
-				LCDPrintString(FOUR, CENTER_ALIGN, String(ReadedWeight) + "g" + " --> " + String(WeightTarget) + "g");
+				snprintf(PrintStr, 20, "%dg -- %dg", ReadedWeight, WeightTarget);
 			else
-				LCDPrintString(FOUR, CENTER_ALIGN, String(CalibrationFactor) + " units");
+				snprintf(PrintStr, 20, "%d%s", CalibrationFactor, " units");
+				
+			LCDPrintString(FOUR, CENTER_ALIGN, PrintStr);
 			if(!(TimeExec % 5))
 			{
 				ToggleValueView = !ToggleValueView;

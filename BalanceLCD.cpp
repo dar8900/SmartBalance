@@ -26,7 +26,7 @@ uint16_t CaloriesReached = 0;
 uint16_t MacrosReached = 0;
 uint8_t MacroChoiced = 0;
 
-short UpArrow[] = 
+const uint8_t UpArrow[] = 
 {
 	0x04,
 	0x0E,
@@ -38,7 +38,7 @@ short UpArrow[] =
 	0x04,
 };
 
-short DownArrow[] = 
+const uint8_t DownArrow[] = 
 {
 	0x04,
 	0x04,
@@ -50,7 +50,7 @@ short DownArrow[] =
 	0x04,
 };
 
-short ToRightArrow[] = 
+const uint8_t ToRightArrow[] = 
 {
 	0x08,
 	0x0C,
@@ -62,7 +62,7 @@ short ToRightArrow[] =
 	0x08
 };
 
-short ToLeftArrow[] = 
+const uint8_t ToLeftArrow[] = 
 {
 	0x02,
 	0x06,
@@ -74,7 +74,7 @@ short ToLeftArrow[] =
 	0x02
 };
 
-String MenuTitle[] = 
+char  *MenuTitle[] = 
 {
 	"Bilancia",
 	"Informazioni",
@@ -101,13 +101,13 @@ typedef enum
 	MAX_MACROS_TYPE
 }MACROS_TYPE;
 
-String LaunchMenuStr[] =
+char *LaunchMenuStr[] =
 {
 	"Per calorie",
 	"Per macros",	
 };
 
-String MacrosName[] = 
+char *MacrosName[] = 
 {
 	"Carboidrati",
 	"Proteine",
@@ -120,7 +120,7 @@ void PreferenceInit()
 	{
 		FoodPreference[PrefIndex].CategoryValue = EEPROM.read(FoodPreference[PrefIndex].CategoryAddr);
 		FoodPreference[PrefIndex].FoodValue = EEPROM.read(FoodPreference[PrefIndex].FoodAddr);
-		yield();
+		delay(1);
 	}	
 	
 }
@@ -134,7 +134,8 @@ bool FoodChoiceMenu()
 	uint16_t Food = 0, FoodMaxItem = 0;
 	bool ExitFoodChoice = false, ChoiceComplete = false;
 	uint8_t ButtonPress = NO_PRESS;
-	String NumItem;
+	// String NumItem;
+	char StrToPrint[MAX_LCD_CHARS + 1];
 	ClearLCD();
 	if(CategoryChoice == MAX_CATEGORY && FoodChoice == MAX_FOOD)
 	{
@@ -143,18 +144,18 @@ bool FoodChoiceMenu()
 			CheckEvent();
 			if(IsFood)
 			{
-				LCDPrintString(ONE, CENTER_ALIGN, String(CategoryTable[Category].CategoryName));
-				LCDPrintString(TWO, CENTER_ALIGN, String(CategoryTable[Category].NutritionalTable[Food].FoodName));
+				LCDPrintString(ONE, CENTER_ALIGN, CategoryTable[Category].CategoryName);
+				LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].NutritionalTable[Food].FoodName);
 				FoodMaxItem = CategoryTable[Category].TableSizeArray;
-				NumItem = String(Food + 1) + "/" + String(FoodMaxItem);
-				LCDPrintString(FOUR, CENTER_ALIGN, NumItem);
+				snprintf(StrToPrint, MAX_LCD_CHARS, "%d/%d", Food + 1, FoodMaxItem);
+				LCDPrintString(FOUR, CENTER_ALIGN, StrToPrint);
 			}
 			if(IsCategory)
 			{
 				LCDPrintString(ONE, CENTER_ALIGN, "Categoria: ");
-				LCDPrintString(TWO, CENTER_ALIGN, String(CategoryTable[Category].CategoryName));
-				NumItem = String(Category + 1) + "/" + String(MAX_CATEGORIES);
-				LCDPrintString(FOUR, CENTER_ALIGN, NumItem);
+				LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].CategoryName);
+				snprintf(StrToPrint, MAX_LCD_CHARS, "%d/%d", Category + 1, MAX_CATEGORIES);
+				LCDPrintString(FOUR, CENTER_ALIGN, StrToPrint);
 			}
 			ButtonPress = KeyPressed();
 			switch(ButtonPress)
@@ -217,7 +218,7 @@ bool FoodChoiceMenu()
 				default:
 					break;
 			}
-			yield();
+			delay(250);
 		}
 	}
 	else
@@ -234,28 +235,33 @@ void ShowMeasure()
 	uint16_t Food = FoodChoice, FoodItemMax = CategoryTable[CategoryChoice].TableSizeArray, Calories = 0;
 	uint16_t Carbs = 0, Protein = 0, Fats = 0;
 	bool ExitShowMeasure = false;
-	char Values[5];
+	char Values[MAX_LCD_CHARS + 1];
 	String WeightStr, CaloriesStr, CarbsStr, ProtStr, FatsStr;
 	ClearLCD();
 	while(!ExitShowMeasure)
 	{
-		LCDPrintString(ONE, CENTER_ALIGN, String(CategoryTable[CategoryChoice].NutritionalTable[Food].FoodName));
+		LCDPrintString(ONE, CENTER_ALIGN, CategoryTable[CategoryChoice].NutritionalTable[Food].FoodName);
 		Weight = GetWeight();
 		CalcNutritionalValues(Weight, CategoryChoice, Food, &Calories, &Carbs, &Protein, &Fats);
-		WeightStr = String(Weight, 4) + "g";
-		snprintf(Values, 5, "%   d", Calories);
-		CaloriesStr = String(Values) + "kcal";
-		snprintf(Values, 5, "%   d", Carbs);
-		CarbsStr = "C: " + String(Values)    + "g";
-		snprintf(Values, 5, "%   d", Protein);
-		ProtStr = "P: " + String(Values)  + "g";
-		snprintf(Values, 5, "%   d", Fats);
-		FatsStr = "G: " + String(Values)     + "g";
-		LCDPrintString(TWO, LEFT_ALIGN, WeightStr);
-		LCDPrintString(TWO, RIGHT_ALIGN, CaloriesStr);
-		LCDPrintString(THREE, LEFT_ALIGN, CarbsStr);
-		LCDPrintString(THREE, RIGHT_ALIGN, ProtStr);
-		LCDPrintString(FOUR, CENTER_ALIGN, FatsStr);
+		snprintf(Values, MAX_LCD_CHARS, "%fg  %dkcal", Weight, Calories);
+		LCDPrintString(TWO, CENTER_ALIGN, Values);
+		// WeightStr = String(Weight, 4) + "g";
+		// snprintf(Values, 5, "%   d", Calories);
+		// CaloriesStr = String(Values) + "kcal";
+		snprintf(Values, MAX_LCD_CHARS, "C:%dg P:%dg", Carbs, Protein);
+		LCDPrintString(THREE, CENTER_ALIGN, Values);
+		// snprintf(Values, 5, "%   d", Carbs);
+		// CarbsStr = "C: " + String(Values)    + "g";
+		// snprintf(Values, 5, "%   d", Protein);
+		// ProtStr = "P: " + String(Values)  + "g";
+		snprintf(Values, MAX_LCD_CHARS, "F:%dg", Fats);
+		LCDPrintString(FOUR, CENTER_ALIGN, Values);
+		// FatsStr = "G: " + String(Values)     + "g";
+		// LCDPrintString(TWO, LEFT_ALIGN, WeightStr);
+		// LCDPrintString(TWO, RIGHT_ALIGN, CaloriesStr);
+		// LCDPrintString(THREE, LEFT_ALIGN, CarbsStr);
+		// LCDPrintString(THREE, RIGHT_ALIGN, ProtStr);
+		// LCDPrintString(FOUR, CENTER_ALIGN, FatsStr);
 		CheckEvent();
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
@@ -303,7 +309,7 @@ void ShowMeasure()
 				break;
 		}
 		OldWeight = Weight;
-		yield();
+		delay(100);
 	}
 }
 
@@ -313,27 +319,32 @@ void ShowInfo()
 	uint16_t Food = FoodChoice, FoodMaxItem = 0;
 	uint16_t Category = CategoryChoice;
 	bool ExitShowInfo = false;
+	char InfoStr[MAX_LCD_CHARS + 1];
 	ClearLCD();
-	String FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);
-	String Calories = String(CategoryTable[Category].NutritionalTable[Food].Calories) + "kcal";
-	String Carb = "C: " + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
-	String Prot = "P: " + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
-	String Fats = "G: " + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";
-	String CategoryName = String(CategoryTable[Category].CategoryName);
+	// String FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);
+	// String Calories = String(CategoryTable[Category].NutritionalTable[Food].Calories) + "kcal";
+	// String Carb = "C: " + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
+	// String Prot = "P: " + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
+	// String Fats = "G: " + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";
+	// String CategoryName = String(CategoryTable[Category].CategoryName);
 	LCDPrintString(ONE, CENTER_ALIGN, "Valori in 100g di:");
 	while(!ExitShowInfo)
 	{
 		FoodMaxItem = CategoryTable[Category].TableSizeArray;
-		FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);
-		Calories = String(CategoryTable[Category].NutritionalTable[Food].Calories) + "kcal";
-		Carb = "C: " + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
-		Prot = "P: " + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
-		Fats = "G: " + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";	
-		LCDPrintString(TWO, CENTER_ALIGN, FoodName);
-		LCDPrintString(THREE, LEFT_ALIGN, Calories);
-		LCDPrintString(THREE, RIGHT_ALIGN, Carb);
-		LCDPrintString(FOUR, LEFT_ALIGN, Prot);
-		LCDPrintString(FOUR, RIGHT_ALIGN, Fats);
+		// FoodName = String(CategoryTable[Category].NutritionalTable[Food].FoodName);
+		// Calories = String(CategoryTable[Category].NutritionalTable[Food].Calories) + "kcal";
+		// Carb = "C: " + String(CategoryTable[Category].NutritionalTable[Food].Carbs) + "g";
+		// Prot = "P: " + String(CategoryTable[Category].NutritionalTable[Food].Prot) + "g";
+		// Fats = "G: " + String(CategoryTable[Category].NutritionalTable[Food].Fats) + "g";
+		
+		LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].NutritionalTable[Food].FoodName);
+		snprintf(InfoStr, MAX_LCD_CHARS, "%fkcal  C:%dg", CategoryTable[Category].NutritionalTable[Food].Calories, CategoryTable[Category].NutritionalTable[Food].Carbs);
+		LCDPrintString(THREE, CENTER_ALIGN, InfoStr);
+		// LCDPrintString(THREE, RIGHT_ALIGN, Carb);
+		snprintf(InfoStr, MAX_LCD_CHARS, "P:%dg  F:%dg", CategoryTable[Category].NutritionalTable[Food].Prot, CategoryTable[Category].NutritionalTable[Food].Fats);
+		LCDPrintString(FOUR, CENTER_ALIGN, InfoStr);
+		// LCDPrintString(FOUR, RIGHT_ALIGN, Fats);
+		
 		CheckEvent();
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
@@ -363,8 +374,8 @@ void ShowInfo()
 					Category = 0;
 				Food = 0;
 				ClearLCD();
-				CategoryName = String(CategoryTable[Category].CategoryName);
-				LCDPrintString(TWO, CENTER_ALIGN, CategoryName);
+				// CategoryName = String(CategoryTable[Category].CategoryName);
+				LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].CategoryName);
 				delay(1000);
 				ClearLCDLine(TWO);
 				LCDPrintString(ONE, CENTER_ALIGN, "Valori in 100g di:");
@@ -377,7 +388,7 @@ void ShowInfo()
 			default:
 				break;		
 		}
-		yield();
+		delay(250);
 	}
 }
 
@@ -459,7 +470,7 @@ bool CheckPreference(uint8_t PreferenceChoice)
 	return Checked;
 }
 
-static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, uint8_t FirstListItem)
+static void RefreshMenuChoice(char *Title, uint8_t MaxItem, uint8_t ItemPos, uint8_t FirstListItem)
 {
 	uint8_t Aux = 0;
 	for(uint8_t MenuIndx = 0; MenuIndx < MAX_LCD_LINE_MENU; MenuIndx++)
@@ -468,7 +479,7 @@ static void RefreshMenuChoice(String *Title, uint8_t MaxItem, uint8_t ItemPos, u
 		if(Aux >= MaxItem)
 			break;
 		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
-		yield();
+		delay(50);
 	}
 
 	LCDShowIcon(TO_RIGHT_ARROW, ItemPos, 0);	
@@ -534,7 +545,7 @@ void LaunchMenu()
 				OldArrowPos = ArrowPos;
 			}
 		}
-		yield();
+		delay(250);
 	}
 	if(ShowFunc)
 	{
@@ -554,6 +565,7 @@ void CompleteLaunchMacros()
 	uint16_t MacrosTarget = 0;
 	uint8_t DishesNumber = 0, DishIndex = 0;
 	bool ChoiceTargetAndDishes = false, ChoiceMacro = false, Target = true, Dishes = false;
+	char MacrosStr[MAX_LCD_CHARS + 1];
 	ClearLCD();
 	Flags.LaunchModeMacro = true;
 	while(!ChoiceMacro)
@@ -588,7 +600,7 @@ void CompleteLaunchMacros()
 			default:
 				break;
 		}
-		yield();				
+		delay(250);				
 	}
 	MacroChoiced = WichMacro;
 	ClearLCD();
@@ -599,14 +611,15 @@ void CompleteLaunchMacros()
 			LCDPrintString(ONE, CENTER_ALIGN, "Quanti grammi di");
 			LCDPrintString(TWO, CENTER_ALIGN, MacrosName[WichMacro]);
 			LCDPrintString(THREE, CENTER_ALIGN, "vuoi raggiungere?");
-			LCDPrintString(FOUR, CENTER_ALIGN, String(MacrosTarget) + "g");
+			snprintf(MacrosStr, MAX_LCD_CHARS, "%dg", MacrosTarget);
+			LCDPrintString(FOUR, CENTER_ALIGN, MacrosStr);
 		}
 		if(Dishes)
 		{
 			LCDPrintString(ONE, CENTER_ALIGN, "Scegli il numero");
 			LCDPrintString(TWO, CENTER_ALIGN, "di piatti");
 			LCDPrintString(THREE, CENTER_ALIGN, "del tuo pasto:");
-			LCDPrintString(FOUR, CENTER_ALIGN, String(DishesNumber));			
+			LCDPrintValue(FOUR, CENTER_ALIGN, DishesNumber);			
 		}
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
@@ -663,14 +676,15 @@ void CompleteLaunchMacros()
 			default:
 				break;
 		}
-		yield();
+		delay(250);
 	}
 	MacrosReached = 0;
 	for(DishIndex = 1; DishIndex <= DishesNumber; DishesNumber++)
 	{
 		int32_t Diff = MacrosTarget - MacrosReached;
 		ClearLCD();
-		LCDPrintString(ONE, CENTER_ALIGN, "Piatto "+ String(DishesNumber));
+		snprintf(MacrosStr, MAX_LCD_CHARS, "%s%d", "Piatto ", DishesNumber);
+		LCDPrintString(ONE, CENTER_ALIGN, MacrosStr);
 		LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
 		Wait(THREE, false);
 		if(FoodChoiceMenu())
@@ -678,7 +692,8 @@ void CompleteLaunchMacros()
 			ShowMeasure();
 			ClearLCD();
 			LCDPrintString(ONE, CENTER_ALIGN, "Grammi rimanenti:");
-			LCDPrintString(TWO, CENTER_ALIGN, String(Diff) + "g");
+			snprintf(MacrosStr, MAX_LCD_CHARS, "%dg", Diff);
+			LCDPrintString(TWO, CENTER_ALIGN, MacrosStr);
 			LCDPrintString(THREE, CENTER_ALIGN, "Per continuare");
 			Wait(FOUR, false);
 		}
@@ -696,7 +711,8 @@ void CompleteLaunchMacros()
 				ClearLCD();
 				LCDPrintString(ONE, CENTER_ALIGN, "Superato il target");
 				LCDPrintString(TWO, CENTER_ALIGN, "di:");	
-				LCDPrintString(THREE, CENTER_ALIGN, String(Diff) + "g");	
+				snprintf(MacrosStr, MAX_LCD_CHARS, "%dg", Diff);
+				LCDPrintString(THREE, CENTER_ALIGN, MacrosStr);	
 				delay(1500);		
 			}
 			ClearLCD();
@@ -717,6 +733,7 @@ void CompleteLaunchCalories()
 	bool ChoiceTargetAndDishes = false, Target = true, Dishes = false;
 	ClearLCD();
 	Flags.LaunchModeCal = true;
+	char MacrosStr[MAX_LCD_CHARS + 1];
 	while(!ChoiceTargetAndDishes)
 	{
 		if(Target)
@@ -724,14 +741,15 @@ void CompleteLaunchCalories()
 			LCDPrintString(ONE, CENTER_ALIGN, "Scegli il target");
 			LCDPrintString(TWO, CENTER_ALIGN, "di calorie del tuo");
 			LCDPrintString(THREE, CENTER_ALIGN, "pasto:");
-			LCDPrintString(FOUR, CENTER_ALIGN, String(CaloriesTarget) + "kcal");
+			snprintf(MacrosStr, MAX_LCD_CHARS, "%dkcal", CaloriesTarget);
+			LCDPrintString(FOUR, CENTER_ALIGN, MacrosStr);
 		}
 		if(Dishes)
 		{
 			LCDPrintString(ONE, CENTER_ALIGN, "Scegli il numero");
 			LCDPrintString(TWO, CENTER_ALIGN, "di piatti");
 			LCDPrintString(THREE, CENTER_ALIGN, "del tuo pasto:");
-			LCDPrintString(FOUR, CENTER_ALIGN, String(DishesNumber));			
+			LCDPrintValue(FOUR, CENTER_ALIGN, DishesNumber);			
 		}
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
@@ -788,14 +806,15 @@ void CompleteLaunchCalories()
 			default:
 				break;
 		}
-		yield();
+		delay(250);
 	}
 	CaloriesReached = 0;
 	for(DishIndex = 1; DishIndex <= DishesNumber; DishesNumber++)
 	{
 		int32_t Diff = CaloriesTarget - CaloriesReached;
 		ClearLCD();
-		LCDPrintString(ONE, CENTER_ALIGN, "Piatto "+ String(DishesNumber));
+		snprintf(MacrosStr, MAX_LCD_CHARS, "%s%d", "Piatto: ", DishesNumber);
+		LCDPrintString(ONE, CENTER_ALIGN, MacrosStr);
 		LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
 		Wait(THREE, false);
 		CategoryChoice = MAX_CATEGORY;
@@ -805,7 +824,8 @@ void CompleteLaunchCalories()
 			ShowMeasure();
 			ClearLCD();
 			LCDPrintString(ONE, CENTER_ALIGN, "Calorie rimanenti:");
-			LCDPrintString(TWO, CENTER_ALIGN, String(Diff) + "kcal");
+			snprintf(MacrosStr, MAX_LCD_CHARS, "%dkcal", Diff);
+			LCDPrintString(TWO, CENTER_ALIGN, MacrosStr);
 			LCDPrintString(THREE, CENTER_ALIGN, "Per continuare");
 			Wait(FOUR, false);
 		}
@@ -823,13 +843,14 @@ void CompleteLaunchCalories()
 				ClearLCD();
 				LCDPrintString(ONE, CENTER_ALIGN, "Superato il target");
 				LCDPrintString(TWO, CENTER_ALIGN, "di:");	
-				LCDPrintString(THREE, CENTER_ALIGN, String(Diff) + "kcal");	
+				snprintf(MacrosStr, MAX_LCD_CHARS, "%dkcal", Diff);
+				LCDPrintString(THREE, CENTER_ALIGN, MacrosStr);	
 				delay(1500);		
 			}
 			ClearLCD();
 			break;
 		}	
-		yield();
+		delay(250);
 	}
 	CaloriesReached = 0;
 	Flags.LaunchModeCal = false;
@@ -900,7 +921,7 @@ MAIN_FUNCTIONS MenuChoice()
 				OldArrowPos = ArrowPos;
 			}
 		}
-		yield();
+		delay(250);
 	}
 	return (MAIN_FUNCTIONS)FunctionChoice;
 }
@@ -909,7 +930,7 @@ MAIN_FUNCTIONS MenuChoice()
 bool CheckYesNo()
 {
 	bool Exit = false, Choice = false;
-	String YesNo[] = {"No", "Si"};
+	char *YesNo[] = {"No", "Si"};
 	uint8_t ButtonPress = NO_PRESS;
 	short YesNoChoice = 0;
 	while(!Exit)
@@ -951,7 +972,7 @@ bool CheckYesNo()
 				break;
 		}
 		ButtonPress = NO_PRESS;
-		yield();
+		delay(100);
 	}
 	return Choice;
 }

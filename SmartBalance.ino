@@ -63,7 +63,7 @@ void Wait(uint8_t Row, bool Clear)
 			default:
 				break;
 		}
-		yield();
+		delay(50);
 	}
 	ClearLCD();
 }
@@ -145,5 +145,5 @@ void loop()
 		default:
 			break;		
 	}
-	yield();
+	delay(500);
 }

@@ -38,7 +38,7 @@ static void BuildCategoryFoodHtml()
 		Option += String(i+1) + "\">";
 		Option += String(CategoryTable[i].CategoryName);
 		Option += "</option>";
-		yield();
+		delay(50);
 	}
 	HomePage += Option + "</select><br><br>";
 	HomePage += "<input type=\"submit\" value=\"Scegli categoria\"></form>";
@@ -65,20 +65,20 @@ void WebServerInit()
 		ClearLCD();
 		if (MDNS.begin(DNSName)) 
 		{        
-			LCDPrintString(ONE, CENTER_ALIGN, "Nome Web:");
-			LCDPrintString(TWO, CENTER_ALIGN, "http://SB01.local");
-			LCDPrintString(THREE, LEFT_ALIGN, "IP:");
-			LCDPrintString(THREE, RIGHT_ALIGN, String(WiFi.softAPIP()[0]) + "." + String(WiFi.softAPIP()[1]) + "." + String(WiFi.softAPIP()[2]) + "." + String(WiFi.softAPIP()[3]));
-			LCDPrintString(FOUR, LEFT_ALIGN, "SSID:");
-			LCDPrintString(FOUR, RIGHT_ALIGN, String(ssid));
+			// LCDPrintString(ONE, CENTER_ALIGN, "Nome Web:");
+			// LCDPrintString(TWO, CENTER_ALIGN, "http://SB01.local");
+			// LCDPrintString(THREE, LEFT_ALIGN, "IP:");
+			// LCDPrintString(THREE, RIGHT_ALIGN, String(WiFi.softAPIP()[0]) + "." + String(WiFi.softAPIP()[1]) + "." + String(WiFi.softAPIP()[2]) + "." + String(WiFi.softAPIP()[3]));
+			// LCDPrintString(FOUR, LEFT_ALIGN, "SSID:");
+			// LCDPrintString(FOUR, RIGHT_ALIGN, String(ssid));
 		} 
 		else
 		{
 
-			LCDPrintString(TWO, LEFT_ALIGN, "IP:");
-			LCDPrintString(TWO, RIGHT_ALIGN, String(WiFi.softAPIP()[0]) + "." + String(WiFi.softAPIP()[1]) + "." + String(WiFi.softAPIP()[2]) + "." + String(WiFi.softAPIP()[3]));
-			LCDPrintString(THREE, LEFT_ALIGN, "SSID:");
-			LCDPrintString(THREE, RIGHT_ALIGN, String(ssid));
+			// LCDPrintString(TWO, LEFT_ALIGN, "IP:");
+			// LCDPrintString(TWO, RIGHT_ALIGN, String(WiFi.softAPIP()[0]) + "." + String(WiFi.softAPIP()[1]) + "." + String(WiFi.softAPIP()[2]) + "." + String(WiFi.softAPIP()[3]));
+			// LCDPrintString(THREE, LEFT_ALIGN, "SSID:");
+			// LCDPrintString(THREE, RIGHT_ALIGN, String(ssid));
 		}
 		delay(1500);
 		ClearLCD();
@@ -97,7 +97,7 @@ static uint8_t SearchCategoryNumber(String CategoryName)
 	{
 		if(CategoryName == String(CategoryTable[i].CategoryName))
 			break;
-		yield();
+		delay(5);
 	}
 	return i;
 }
