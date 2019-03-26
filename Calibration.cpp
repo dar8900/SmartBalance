@@ -8,7 +8,7 @@
 
 
 #include "Calibration.h"
-#include "HX711.h"
+
 #include <EEPROM.h>
 #include "EepromAddr.h"
 #include <LCDLib.h>
@@ -18,7 +18,7 @@
 	
 extern PREFERENCE_TYPE FoodPreference[MAX_PREFERENCE];
  
-HX711 scale(HX711_CLK, HX711_DOUT);
+HX711 scale;
 
 
 void BalanceSetup()
@@ -51,6 +51,11 @@ void BalanceSetup()
 		LCDPrintString(ONE, CENTER_ALIGN, "Modalita:");
 		LCDPrintString(ONE, CENTER_ALIGN, "CALIBRAZIONE");
 		delay(1500);
+		ClearLCD();
+		while(!IsScaleReady())
+		{
+			LCDPrintString(ONE, CENTER_ALIGN, "Bilancia non pronta");
+		}
 		ClearLCD();
 		AutoCalibration();
 		EEPROM.write(CALIBRATION_MODE_ADDR, NORMAL_MODE);
@@ -227,6 +232,16 @@ void AutoCalibration()
 float GetWeight()
 {
 	return scale.get_units(5);	// In g
+}
+
+void ScaleInit()
+{
+	scale.begin(HX711_CLK, HX711_DOUT);
+}
+
+bool IsScaleReady()
+{
+	return scale.is_ready();
 }
 
 void SetTare()

@@ -21,7 +21,7 @@ typedef struct
 {
 	const char *CategoryName;
 	const NUTRITIONAL_VALUES *NutritionalTable;
-	const uint16_t TableSizeArray;
+	const uint16_t FoodTableSize;
 }NUTRITIONAL_CATEGORIES;
 
 typedef enum

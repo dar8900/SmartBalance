@@ -46,10 +46,10 @@ typedef enum
 }PREFERENCE_NUMBER;
 
 
-extern short UpArrow[];
-extern short DownArrow[];
-extern short ToRightArrow[];
-extern short ToLeftArrow[];
+extern uint8_t UpArrow[];
+extern uint8_t DownArrow[];
+extern uint8_t ToRightArrow[];
+extern uint8_t ToLeftArrow[];
 
 extern uint8_t  CategoryChoice;
 extern uint16_t  FoodChoice;

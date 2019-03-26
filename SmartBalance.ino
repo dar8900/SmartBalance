@@ -12,6 +12,7 @@
 #include "Web.h"
 #include "Keyboard.h"
 
+
 #define SDA_PIN   5
 #define SCL_PIN   4
 
@@ -78,6 +79,7 @@ void setup()
 	Wire.begin(SDA_PIN, SCL_PIN); // Inizializza I2C per NodeMCU
 	EEPROM.begin(512);
 	LCDInit();
+	ScaleInit();
 	LCDCreateIcon(UpArrow, UP_ARROW);
 	LCDCreateIcon(DownArrow, DOWN_ARROW);
 	LCDCreateIcon(ToRightArrow, TO_RIGHT_ARROW);
@@ -88,7 +90,7 @@ void setup()
 	ClearLCD();
 	Wait(TWO, true);
 	BalanceSetup();
-	FillNutritionalTableSizeArray();
+	// FillNutritionalTableSizeArray();
 	//WebServerInit();
 	CategoryChoice = MAX_CATEGORY;
 	FoodChoice = MAX_FOOD;
