@@ -11,6 +11,13 @@ typedef enum
 	EXIT_PIN        // 15
 }PINS;
 
+
+// #define	UP_PIN       16          // 12 D3
+// #define	DOWN_PIN     13       // 13 D7
+// #define	OK_TARE_PIN  14    // 14 D5
+// #define	EXIT_PIN     15        // 15 D8
+
+
 typedef struct
 {
 	bool ClientConnected;

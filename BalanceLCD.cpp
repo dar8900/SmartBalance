@@ -245,7 +245,7 @@ void ShowMeasure()
 		CalcNutritionalValues(Weight, CategoryChoice, Food, &Calories, &Carbs, &Protein, &Fats);
 		if(Weight < 1000)
 		{
-			snprintf(Values, MAX_LCD_CHARS, "%fg  %dkcal", Weight, Calories);
+			snprintf(Values, MAX_LCD_CHARS, "%6.0fg  %dkcal", ceil(Weight), Calories);
 			LCDPrintString(TWO, CENTER_ALIGN, Values);
 		}
 		else

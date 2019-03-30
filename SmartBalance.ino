@@ -72,10 +72,11 @@ void Wait(uint8_t Row, bool Clear)
 void setup() 
 {
 	Serial.begin(9600);
-	pinMode(UP_PIN, INPUT);
 	pinMode(DOWN_PIN, INPUT);
 	pinMode(OK_TARE_PIN, INPUT);
 	pinMode(EXIT_PIN, INPUT);
+	// pinMode(UP_PIN, INPUT);
+
 	Wire.begin(SDA_PIN, SCL_PIN); // Inizializza I2C per NodeMCU
 	EEPROM.begin(512);
 	LCDInit();

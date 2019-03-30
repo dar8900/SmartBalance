@@ -49,7 +49,7 @@ void BalanceSetup()
 	{
 		ClearLCD();
 		LCDPrintString(ONE, CENTER_ALIGN, "Modalita:");
-		LCDPrintString(ONE, CENTER_ALIGN, "CALIBRAZIONE");
+		LCDPrintString(TWO, CENTER_ALIGN, "CALIBRAZIONE");
 		delay(1500);
 		ClearLCD();
 		while(!IsScaleReady())
@@ -125,8 +125,8 @@ void AutoCalibration()
 {
 	uint16_t WeightTarget = 0;
 	char PrintStr[21];
-	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 50;
-	float CalibrationFactor = 1.0, ReadedWeight = 0.0;
+	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 1;
+	float CalibrationFactor = 10.0, ReadedWeight = 0.0;
 	bool ExitSetWeightTarget = false, ToggleValueView = false;
 	uint16_t TimeExec = 0;
 	ClearLCD();
@@ -159,7 +159,7 @@ void AutoCalibration()
 			default:
 				break;		
 		}
-		delay(250);	
+		delay(25);	
 	}
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Lasciare la bilancia");
@@ -175,17 +175,22 @@ void AutoCalibration()
 	Wait(FOUR, false);
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Sto calibrando");
+	float OldCalibrationF = 0.0;
 	while(1)
 	{
-		SetScale(CalibrationFactor);
-		ReadedWeight = roundf(scale.get_units(10));
-		if(ReadedWeight > (float)WeightTarget)
+		if(CalibrationFactor != OldCalibrationF)
+		{
+			OldCalibrationF = CalibrationFactor;
+			SetScale(CalibrationFactor);
+		}
+		ReadedWeight = roundf(scale.get_units(5));
+		if(ReadedWeight < (float)WeightTarget)
 		{
 			CalibrationFactor -= 1.0;
 			if(CalibrationFactor == 0)
 				CalibrationFactor = -1.0;
 		}
-		else if(ReadedWeight < (float)WeightTarget)
+		else if(ReadedWeight > (float)WeightTarget)
 		{
 			CalibrationFactor += 1.0;
 			if(CalibrationFactor == 0)
@@ -193,33 +198,13 @@ void AutoCalibration()
 		}
 		else if(ReadedWeight == (float)WeightTarget)
 			break;
-		TimerPoint--;
-		if(TimerPoint == 0)
-		{
-			TimerPoint = 50;
-			LCDPrintString(TWO, PointPos, ".");
-			PointPos++;
-			if(PointPos == LCD_COL)
-			{
-				PointPos = 0;
-				ClearLCDLine(TWO);
-			}
-			TimeExec++;
-			snprintf(PrintStr, 20, "%ds", TimeExec);
-			LCDPrintString(THREE, CENTER_ALIGN, PrintStr);
-			if(!ToggleValueView)
-				snprintf(PrintStr, 20, "%dg -- %dg", ReadedWeight, WeightTarget);
-			else
-				snprintf(PrintStr, 20, "%d%s", CalibrationFactor, " units");
-				
-			LCDPrintString(FOUR, CENTER_ALIGN, PrintStr);
-			if(!(TimeExec % 5))
-			{
-				ToggleValueView = !ToggleValueView;
-				ClearLCDLine(FOUR);
-			}
-		}
-		delay(20);
+
+		snprintf(PrintStr, 20, "%8.1fg - %dg", ReadedWeight, WeightTarget);
+		LCDPrintString(THREE, CENTER_ALIGN, PrintStr);
+		snprintf(PrintStr, 20, "%4.1f%s", CalibrationFactor, " units");
+		LCDPrintString(FOUR, CENTER_ALIGN, PrintStr);
+		
+		delay(500);
 	}
 	EEPROM.put(CALIBRATION_ADDR, CalibrationFactor);
 	EEPROM.commit();
@@ -236,7 +221,7 @@ float GetWeight()
 
 void ScaleInit()
 {
-	scale.begin(HX711_CLK, HX711_DOUT);
+	scale.begin(HX711_DOUT, HX711_CLK);
 }
 
 bool IsScaleReady()

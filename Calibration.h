@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include "HX711.h"
 
-#define HX711_CLK   1
-#define HX711_DOUT  3
+#define HX711_CLK   9
+#define HX711_DOUT  10
 
 
 typedef enum
