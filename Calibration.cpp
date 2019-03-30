@@ -41,8 +41,8 @@ void BalanceSetup()
 		delay(1000);
 		ClearLCD();
 		LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
-		delay(1500);
 		EEPROM.commit();
+		delay(1500);
 		ESP.restart();
 	}
 	if(BalanceMode == CALIBRATION_MODE)
@@ -65,6 +65,7 @@ void BalanceSetup()
 		delay(1500);
 		ClearLCD();
 		EEPROM.commit();
+		delay(1000);
 		ESP.restart();		
 	}
 	if(BalanceMode == NORMAL_MODE)
@@ -120,6 +121,8 @@ void BalanceSetup()
 		// yield();
 	// }
 // }
+
+// IL CELLULARE CON LA COVER PESA 208g
 
 void AutoCalibration()
 {
@@ -183,7 +186,7 @@ void AutoCalibration()
 			OldCalibrationF = CalibrationFactor;
 			SetScale(CalibrationFactor);
 		}
-		ReadedWeight = roundf(scale.get_units(5));
+		ReadedWeight = roundf(scale.get_units(10));
 		if(ReadedWeight < (float)WeightTarget)
 		{
 			CalibrationFactor -= 1.0;
@@ -199,12 +202,16 @@ void AutoCalibration()
 		else if(ReadedWeight == (float)WeightTarget)
 			break;
 
-		snprintf(PrintStr, 20, "%8.1fg - %dg", ReadedWeight, WeightTarget);
-		LCDPrintString(THREE, CENTER_ALIGN, PrintStr);
+		LCDPrintString(TWO, LEFT_ALIGN, "Letto:");
+		LCDPrintString(TWO, RIGHT_ALIGN, "Target:");
+		snprintf(PrintStr, 20, "%8.1fg", ReadedWeight);
+		LCDPrintString(THREE, LEFT_ALIGN, PrintStr);
+		snprintf(PrintStr, 20, "%%dg", WeightTarget);
+		LCDPrintString(THREE, RIGHT_ALIGN, PrintStr);
 		snprintf(PrintStr, 20, "%4.1f%s", CalibrationFactor, " units");
 		LCDPrintString(FOUR, CENTER_ALIGN, PrintStr);
 		
-		delay(500);
+		delay(200);
 	}
 	EEPROM.put(CALIBRATION_ADDR, CalibrationFactor);
 	EEPROM.commit();

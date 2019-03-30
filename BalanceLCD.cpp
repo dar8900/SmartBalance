@@ -241,16 +241,16 @@ void ShowMeasure()
 	while(!ExitShowMeasure)
 	{
 		LCDPrintString(ONE, CENTER_ALIGN, CategoryTable[CategoryChoice].NutritionalTable[Food].FoodName);
-		Weight = GetWeight();
+		Weight = roundf(GetWeight());
 		CalcNutritionalValues(Weight, CategoryChoice, Food, &Calories, &Carbs, &Protein, &Fats);
 		if(Weight < 1000)
 		{
-			snprintf(Values, MAX_LCD_CHARS, "%6.0fg  %dkcal", ceil(Weight), Calories);
+			snprintf(Values, MAX_LCD_CHARS, "%6fg  %dkcal", Weight, Calories);
 			LCDPrintString(TWO, CENTER_ALIGN, Values);
 		}
 		else
 		{
-			snprintf(Values, MAX_LCD_CHARS, "%.3fkg %dkcal", Weight/1000.0, Calories);
+			snprintf(Values, MAX_LCD_CHARS, "%4.3fkg %dkcal", Weight/1000.0, Calories);
 			LCDPrintString(TWO, CENTER_ALIGN, Values);			
 		}
 		snprintf(Values, MAX_LCD_CHARS, "C:%dg P:%dg", Carbs, Protein);
@@ -322,7 +322,7 @@ void ShowInfo()
 	{
 		FoodMaxItem = CategoryTable[Category].FoodTableSize;		
 		LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].NutritionalTable[Food].FoodName);
-		snprintf(InfoStr, MAX_LCD_CHARS, "%fkcal  C:%dg", CategoryTable[Category].NutritionalTable[Food].Calories, CategoryTable[Category].NutritionalTable[Food].Carbs);
+		snprintf(InfoStr, MAX_LCD_CHARS, "%dkcal  C:%dg", CategoryTable[Category].NutritionalTable[Food].Calories, CategoryTable[Category].NutritionalTable[Food].Carbs);
 		LCDPrintString(THREE, CENTER_ALIGN, InfoStr);
 		snprintf(InfoStr, MAX_LCD_CHARS, "P:%dg  F:%dg", CategoryTable[Category].NutritionalTable[Food].Prot, CategoryTable[Category].NutritionalTable[Food].Fats);
 		LCDPrintString(FOUR, CENTER_ALIGN, InfoStr);		
@@ -456,8 +456,8 @@ static void RefreshMenuChoice(const char *Title[], uint8_t MaxItem, uint8_t Item
 		Aux = FirstListItem + MenuIndx;
 		if(Aux >= MaxItem)
 			break;
-		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[MenuIndx]);
-		delay(50);
+		LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, Title[Aux]);
+		delay(5);
 	}
 
 	LCDShowIcon(TO_RIGHT_ARROW, ItemPos, 0);	
@@ -847,7 +847,18 @@ MAIN_FUNCTIONS MenuChoice()
 	LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
 	while(!ExitMenuChoice)
 	{
+		// uint8_t Aux = 0;
+		// for(uint8_t MenuIndx = 0; MenuIndx < MAX_LCD_LINE_MENU; MenuIndx++)
+		// {
+			// Aux = TopItem + MenuIndx;
+			// if(Aux >= MAX_FUNCTIONS)
+				// break;
+			// LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, MenuTitle[Aux]);
+			// // delay(10);
+		// }
 		RefreshMenuChoice(MenuTitle, MAX_FUNCTIONS, ArrowPos, TopItem);
+		LCDShowIcon(TO_RIGHT_ARROW, ArrowPos, 0);
+
 		CheckEvent();
 		if(Flags.CategoryModified)
 		{

@@ -142,8 +142,8 @@ void loop()
 			delay(1000);
 			ClearLCD();
 			LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
-			delay(1000);
 			EEPROM.commit();
+			delay(1000);			
 			ESP.restart();	
 		default:
 			break;		
