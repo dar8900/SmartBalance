@@ -137,6 +137,7 @@ bool FoodChoiceMenu()
 	// String NumItem;
 	char StrToPrint[MAX_LCD_CHARS + 1];
 	ClearLCD();
+	ButtonPress = NO_PRESS;
 	if(CategoryChoice == MAX_CATEGORY && FoodChoice == MAX_FOOD)
 	{
 		while(!ExitFoodChoice)
@@ -176,6 +177,7 @@ bool FoodChoiceMenu()
 							Food = FoodMaxItem;
 					}
 					ClearLCDLine(TWO);
+					ClearLCDLine(FOUR);
 					break;
 				case DOWN:
 					if(IsCategory)
@@ -193,6 +195,7 @@ bool FoodChoiceMenu()
 							Food = 0;
 					}
 					ClearLCDLine(TWO);
+					ClearLCDLine(FOUR);
 					break;
 				case OK_TARE:
 					if(IsCategory)
@@ -201,13 +204,15 @@ bool FoodChoiceMenu()
 						IsCategory = false;
 						CategoryChoice = Category;
 						ClearLCD();
+						// ButtonPress = NO_PRESS;
 					}
-					if(IsFood)
+					else if(IsFood)
 					{
 						IsFood = false;
 						ChoiceComplete = true;
 						FoodChoice = Food;
 						ExitFoodChoice = true;
+						// ButtonPress = NO_PRESS;
 					}
 					break;
 				case EXIT:
@@ -236,7 +241,7 @@ void ShowMeasure()
 	uint16_t Carbs = 0, Protein = 0, Fats = 0;
 	bool ExitShowMeasure = false;
 	char Values[MAX_LCD_CHARS + 1];
-	String WeightStr, CaloriesStr, CarbsStr, ProtStr, FatsStr;
+	uint8_t RefreshCnt = 35;
 	ClearLCD();
 	while(!ExitShowMeasure)
 	{
@@ -245,7 +250,7 @@ void ShowMeasure()
 		CalcNutritionalValues(Weight, CategoryChoice, Food, &Calories, &Carbs, &Protein, &Fats);
 		if(Weight < 1000)
 		{
-			snprintf(Values, MAX_LCD_CHARS, "%6fg  %dkcal", Weight, Calories);
+			snprintf(Values, MAX_LCD_CHARS, "%6.0fg  %dkcal", Weight, Calories);
 			LCDPrintString(TWO, CENTER_ALIGN, Values);
 		}
 		else
@@ -303,7 +308,12 @@ void ShowMeasure()
 			default:
 				break;
 		}
-		OldWeight = Weight;
+		RefreshCnt--;
+		if(RefreshCnt == 0)
+		{
+			RefreshCnt = 35;
+			ClearLCD();			
+		}
 		delay(100);
 	}
 }
@@ -322,9 +332,9 @@ void ShowInfo()
 	{
 		FoodMaxItem = CategoryTable[Category].FoodTableSize;		
 		LCDPrintString(TWO, CENTER_ALIGN, CategoryTable[Category].NutritionalTable[Food].FoodName);
-		snprintf(InfoStr, MAX_LCD_CHARS, "%dkcal  C:%dg", CategoryTable[Category].NutritionalTable[Food].Calories, CategoryTable[Category].NutritionalTable[Food].Carbs);
+		snprintf(InfoStr, MAX_LCD_CHARS, "%dkcal  C:%4.0fg", CategoryTable[Category].NutritionalTable[Food].Calories, CategoryTable[Category].NutritionalTable[Food].Carbs);
 		LCDPrintString(THREE, CENTER_ALIGN, InfoStr);
-		snprintf(InfoStr, MAX_LCD_CHARS, "P:%dg  F:%dg", CategoryTable[Category].NutritionalTable[Food].Prot, CategoryTable[Category].NutritionalTable[Food].Fats);
+		snprintf(InfoStr, MAX_LCD_CHARS, "P:%4.0fg  F:%4.0fg", CategoryTable[Category].NutritionalTable[Food].Prot, CategoryTable[Category].NutritionalTable[Food].Fats);
 		LCDPrintString(FOUR, CENTER_ALIGN, InfoStr);		
 		CheckEvent();
 		ButtonPress = KeyPressed();
@@ -641,6 +651,7 @@ void CompleteLaunchMacros()
 				{
 					Target = false;
 					Dishes = true;
+					ClearLCD();
 				}
 				else if(Dishes)
 				{
@@ -657,11 +668,11 @@ void CompleteLaunchMacros()
 		delay(250);
 	}
 	MacrosReached = 0;
-	for(DishIndex = 1; DishIndex <= DishesNumber; DishesNumber++)
+	for(DishIndex = 1; DishIndex <= DishesNumber; DishIndex++)
 	{
 		int32_t Diff = MacrosTarget - MacrosReached;
 		ClearLCD();
-		snprintf(MacrosStr, MAX_LCD_CHARS, "%s%d", "Piatto ", DishesNumber);
+		snprintf(MacrosStr, MAX_LCD_CHARS, "%s%d", "Piatto ", DishIndex);
 		LCDPrintString(ONE, CENTER_ALIGN, MacrosStr);
 		LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
 		Wait(THREE, false);
@@ -771,6 +782,7 @@ void CompleteLaunchCalories()
 				{
 					Target = false;
 					Dishes = true;
+					ClearLCD();
 				}
 				else if(Dishes)
 				{
@@ -787,11 +799,11 @@ void CompleteLaunchCalories()
 		delay(250);
 	}
 	CaloriesReached = 0;
-	for(DishIndex = 1; DishIndex <= DishesNumber; DishesNumber++)
+	for(DishIndex = 1; DishIndex <= DishesNumber; DishIndex++)
 	{
 		int32_t Diff = CaloriesTarget - CaloriesReached;
 		ClearLCD();
-		snprintf(MacrosStr, MAX_LCD_CHARS, "%s%d", "Piatto: ", DishesNumber);
+		snprintf(MacrosStr, MAX_LCD_CHARS, "%s%d", "Piatto: ", DishIndex);
 		LCDPrintString(ONE, CENTER_ALIGN, MacrosStr);
 		LCDPrintString(TWO, CENTER_ALIGN, "Per continuare");
 		Wait(THREE, false);
@@ -842,7 +854,7 @@ MAIN_FUNCTIONS MenuChoice()
 	uint8_t ArrowPos = 1, OldArrowPos = 1;
 	uint8_t TopItem = 0;
 	bool ExitMenuChoice = false;
-	uint8_t FunctionChoice = BALANCE_FUNCTION;
+	uint8_t FunctionChoice = BALANCE_FUNCTION, OldFunctionChoice = BALANCE_FUNCTION;
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
 	while(!ExitMenuChoice)
@@ -856,6 +868,7 @@ MAIN_FUNCTIONS MenuChoice()
 			// LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, MenuTitle[Aux]);
 			// // delay(10);
 		// }
+		LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
 		RefreshMenuChoice(MenuTitle, MAX_FUNCTIONS, ArrowPos, TopItem);
 		LCDShowIcon(TO_RIGHT_ARROW, ArrowPos, 0);
 
@@ -892,6 +905,11 @@ MAIN_FUNCTIONS MenuChoice()
 		}
 		if(FunctionChoice < MAX_LCD_LINE_MENU)
 		{
+			if(OldFunctionChoice >= MAX_LCD_LINE_MENU)
+			{
+				ClearLCD();
+				OldFunctionChoice = FunctionChoice;
+			}
 			TopItem = 0;
 			ArrowPos = FunctionChoice  + 1;
 			if(OldArrowPos != ArrowPos)
@@ -902,6 +920,11 @@ MAIN_FUNCTIONS MenuChoice()
 		}
 		else
 		{
+			if(FunctionChoice != OldFunctionChoice)
+			{
+				ClearLCD();
+				OldFunctionChoice = FunctionChoice;
+			}
 			TopItem = FunctionChoice - MAX_LCD_LINE_MENU + 1;
 			ArrowPos = MAX_LCD_LINE_MENU;
 			if(OldArrowPos != ArrowPos)
@@ -910,7 +933,7 @@ MAIN_FUNCTIONS MenuChoice()
 				OldArrowPos = ArrowPos;
 			}
 		}
-		delay(250);
+		delay(50);
 	}
 	return (MAIN_FUNCTIONS)FunctionChoice;
 }

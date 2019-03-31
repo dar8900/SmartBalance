@@ -28,6 +28,7 @@ typedef struct
 
 extern SYSTEM_FLAGS Flags;
 
+void Reboot(void);
 void CheckEvent(void);
 void Wait(uint8_t Row, bool Clear);
 #endif

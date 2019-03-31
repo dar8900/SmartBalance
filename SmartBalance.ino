@@ -21,6 +21,10 @@ extern uint8_t PreferenceNumber;
 
 SYSTEM_FLAGS Flags;
 
+void Reboot()
+{
+	ESP.restart();
+}
 
 void CheckEvent()
 {
@@ -87,9 +91,9 @@ void setup()
 	LCDCreateIcon(ToLeftArrow, TO_LEFT_ARROW);
 	ClearLCD();
 	LCDPrintString(TWO, CENTER_ALIGN, "Home Microtech");
-	delay(1000);
+	delay(1500);
 	ClearLCD();
-	Wait(TWO, true);
+	// Wait(TWO, true);
 	BalanceSetup();
 	// FillNutritionalTableSizeArray();
 	//WebServerInit();
@@ -110,7 +114,7 @@ void loop()
 			}
 			break;
 		case INFO_FUNCTION:
-			if(FoodChoiceMenu)
+			if(FoodChoiceMenu())
 			{
 				ShowInfo();
 			}
@@ -143,8 +147,10 @@ void loop()
 			ClearLCD();
 			LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
 			EEPROM.commit();
+			delay(1000);
+			ClearLCD();
 			delay(1000);			
-			ESP.restart();	
+			Reboot();
 		default:
 			break;		
 	}

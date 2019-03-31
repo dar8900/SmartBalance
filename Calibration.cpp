@@ -43,7 +43,7 @@ void BalanceSetup()
 		LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
 		EEPROM.commit();
 		delay(1500);
-		ESP.restart();
+		Reboot();
 	}
 	if(BalanceMode == CALIBRATION_MODE)
 	{
@@ -66,7 +66,7 @@ void BalanceSetup()
 		ClearLCD();
 		EEPROM.commit();
 		delay(1000);
-		ESP.restart();		
+		Reboot();		
 	}
 	if(BalanceMode == NORMAL_MODE)
 	{
@@ -126,7 +126,7 @@ void BalanceSetup()
 
 void AutoCalibration()
 {
-	uint16_t WeightTarget = 0;
+	uint16_t WeightTarget = 0, OldWeight = 0;;
 	char PrintStr[21];
 	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 1;
 	float CalibrationFactor = 10.0, ReadedWeight = 0.0;
@@ -148,11 +148,22 @@ void AutoCalibration()
 					WeightTarget--;
 				else
 					WeightTarget = 5000;
+				if(OldWeight >= 1000 && WeightTarget < 1000)
+				{
+					ClearLCDLine(THREE);
+					OldWeight = WeightTarget;
+				}
+				break;
 			case DOWN:
 				if(WeightTarget < 5000)
 					WeightTarget++;
 				else
 					WeightTarget = 0;
+				if(OldWeight >= 1000 && WeightTarget < 1000)
+				{
+					ClearLCDLine(THREE);
+					OldWeight = WeightTarget;
+				}
 				break;
 			case OK_TARE:
 				ExitSetWeightTarget = true;
@@ -162,12 +173,16 @@ void AutoCalibration()
 			default:
 				break;		
 		}
-		delay(25);	
+		if(WeightTarget >= 1000)
+			OldWeight = WeightTarget;
+		delay(10);	
 	}
 	ClearLCD();
+	ButtonPress = NO_PRESS;
 	LCDPrintString(ONE, CENTER_ALIGN, "Lasciare la bilancia");
 	LCDPrintString(TWO, CENTER_ALIGN, "vuota e");
 	Wait(THREE, false);
+	ButtonPress = NO_PRESS;
 	ResetScale(); // Reset the balace scale
 	ResetTare(); //Reset the scale to 0
 	delay(1000);
@@ -189,26 +204,68 @@ void AutoCalibration()
 		ReadedWeight = roundf(scale.get_units(10));
 		if(ReadedWeight < (float)WeightTarget)
 		{
-			CalibrationFactor -= 1.0;
-			if(CalibrationFactor == 0)
-				CalibrationFactor = -1.0;
+			if(ReadedWeight - (float)WeightTarget > 100)
+			{
+				CalibrationFactor -= 50.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -50.0;				
+			}
+			else if(ReadedWeight - (float)WeightTarget > 50)
+			{
+				CalibrationFactor -= 5.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -5.0;				
+			}
+			else if(ReadedWeight - (float)WeightTarget > 10)
+			{
+				CalibrationFactor -= 2.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -2.0;				
+			}
+			else
+			{
+				CalibrationFactor -= 1.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -1.0;
+			}
 		}
 		else if(ReadedWeight > (float)WeightTarget)
 		{
-			CalibrationFactor += 1.0;
-			if(CalibrationFactor == 0)
-				CalibrationFactor = 1.0;
+			if(ReadedWeight - (float)WeightTarget > 100)
+			{
+				CalibrationFactor += 50.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -50.0;				
+			}
+			else if(ReadedWeight - (float)WeightTarget > 50)
+			{
+				CalibrationFactor += 5.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -5.0;				
+			}
+			else if(ReadedWeight - (float)WeightTarget > 10)
+			{
+				CalibrationFactor += 2.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -2.0;				
+			}
+			else
+			{
+				CalibrationFactor += 1.0;
+				if(CalibrationFactor == 0)
+					CalibrationFactor = -1.0;
+			}
 		}
 		else if(ReadedWeight == (float)WeightTarget)
 			break;
 
 		LCDPrintString(TWO, LEFT_ALIGN, "Letto:");
 		LCDPrintString(TWO, RIGHT_ALIGN, "Target:");
-		snprintf(PrintStr, 20, "%8.1fg", ReadedWeight);
+		snprintf(PrintStr, 20, "%8.0fg", ReadedWeight);
 		LCDPrintString(THREE, LEFT_ALIGN, PrintStr);
-		snprintf(PrintStr, 20, "%%dg", WeightTarget);
+		snprintf(PrintStr, 20, "%dg", WeightTarget);
 		LCDPrintString(THREE, RIGHT_ALIGN, PrintStr);
-		snprintf(PrintStr, 20, "%4.1f%s", CalibrationFactor, " units");
+		snprintf(PrintStr, 20, "%4.0f%s", CalibrationFactor, " units");
 		LCDPrintString(FOUR, CENTER_ALIGN, PrintStr);
 		
 		delay(200);
