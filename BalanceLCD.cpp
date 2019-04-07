@@ -163,7 +163,7 @@ void PreferenceInit()
 // Prima la scelta della categoria, poi la scelta dell'alimento
 bool FoodChoiceMenu() 
 {
-bool IsCategory = true, IsFood = false; // Se vero selezioni la categoria altrimenti il cibo
+	bool IsCategory = true, IsFood = false; // Se vero selezioni la categoria altrimenti il cibo
 	uint8_t Category = 0;
 	uint16_t Food = 0, FoodMaxItem = 0;
 	bool ExitFoodChoice = false, ChoiceComplete = false;
@@ -265,7 +265,7 @@ bool IsCategory = true, IsFood = false; // Se vero selezioni la categoria altrim
 		ChoiceComplete = true;
 	}
 	return ChoiceComplete;
-}
+
 }
 
 void ShowNormalMeasure()
@@ -281,9 +281,14 @@ void ShowNormalMeasure()
 		LCDPrintString(ONE, CENTER_ALIGN, "Peso letto:");
 		Weight = roundf(GetWeight());
 		if(Weight < 1000)
-			snprintf(Values, MAX_LCD_CHARS, "%6fg", Weight);
+			snprintf(Values, MAX_LCD_CHARS, "%6.0fg", Weight);
 		else
 			snprintf(Values, MAX_LCD_CHARS, "%4.3fkg", Weight / 1000);
+		if(OldWeight != Weight)
+		{
+			OldWeight = Weight;
+			ClearLCDLine(TWO);
+		}
 		LCDPrintString(TWO, CENTER_ALIGN, Values);
 		LCDPrintString(FOUR, CENTER_ALIGN, "OK per la tara");
 		CheckEvent();
@@ -754,7 +759,7 @@ void CompleteLaunchMacros()
 		Wait(THREE, false);
 		if(FoodChoiceMenu())
 		{
-			ShowMeasure();
+			ShowMeasureCal();
 			ClearLCD();
 			LCDPrintString(ONE, CENTER_ALIGN, "Grammi rimanenti:");
 			snprintf(MacrosStr, MAX_LCD_CHARS, "%dg", Diff);
@@ -887,7 +892,7 @@ void CompleteLaunchCalories()
 		FoodChoice = MAX_FOOD;
 		if(FoodChoiceMenu())
 		{
-			ShowMeasure();
+			ShowMeasureCal();
 			ClearLCD();
 			LCDPrintString(ONE, CENTER_ALIGN, "Calorie rimanenti:");
 			snprintf(MacrosStr, MAX_LCD_CHARS, "%dkcal", Diff);

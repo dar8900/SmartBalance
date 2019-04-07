@@ -24,7 +24,7 @@ SYSTEM_FLAGS Flags;
 void Reboot()
 {
 	ESP.restart();
-
+}
 
 void CheckEvent()
 {
@@ -93,7 +93,7 @@ void setup()
 	LCDPrintString(TWO, CENTER_ALIGN, "Home Microtech");
 	delay(1500);
 	ClearLCD();
-	Wait(TWO, true);
+	// Wait(TWO, true);
 	BalanceSetup();
 	// FillNutritionalTableSizeArray();
 	//WebServerInit();
@@ -108,7 +108,7 @@ void loop()
 	switch(WichFunction)
 	{
 		case BALANCE_FUNCTION_NORM:
-			
+			ShowNormalMeasure();
 			break;
 		case BALANCE_FUNCTION_CAL:
 			if(FoodChoiceMenu())

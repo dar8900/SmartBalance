@@ -95,6 +95,7 @@ bool FoodChoiceMenu(void);
 void LaunchMenu(void);
 void CompleteLaunchMacros(void);
 void CompleteLaunchCalories(void);
+void ShowNormalMeasure(void);
 void ShowMeasureCal(void);
 void ShowInfo(void);
 MAIN_FUNCTIONS MenuChoice(void);
