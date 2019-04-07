@@ -12,10 +12,26 @@
 
 PREFERENCE_TYPE FoodPreference[MAX_PREFERENCE] = 
 {
-	{FOOD_1_ADDR, FOOD_1_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
-	{FOOD_2_ADDR, FOOD_2_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
-	{FOOD_3_ADDR, FOOD_3_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
-	{FOOD_4_ADDR, FOOD_4_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_1_ADDR , FOOD_1_ADDR + 1 , INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_2_ADDR , FOOD_2_ADDR + 1 , INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_3_ADDR , FOOD_3_ADDR + 1 , INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_4_ADDR , FOOD_4_ADDR + 1 , INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_5_ADDR , FOOD_5_ADDR  + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_6_ADDR , FOOD_6_ADDR  + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_7_ADDR , FOOD_7_ADDR  + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_8_ADDR , FOOD_8_ADDR  + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_9_ADDR , FOOD_9_ADDR  + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_10_ADDR, FOOD_10_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_11_ADDR, FOOD_11_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_12_ADDR, FOOD_12_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_13_ADDR, FOOD_13_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_14_ADDR, FOOD_14_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_15_ADDR, FOOD_15_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_16_ADDR, FOOD_16_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_17_ADDR, FOOD_17_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_18_ADDR, FOOD_18_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_19_ADDR, FOOD_19_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
+	{FOOD_20_ADDR, FOOD_20_ADDR + 1, INVALID_EEPROM_VALUE, INVALID_EEPROM_VALUE},
 };
 
 uint8_t  CategoryChoice;
@@ -76,14 +92,32 @@ uint8_t ToLeftArrow[] =
 
 const char  *MenuTitle[] = 
 {
-	"Bilancia",
+	"Bilancia normale",
+	"Bilancia calorie",
 	"Informazioni",
 	"Pasto",
 	"Preferito 1",
 	"Preferito 2",
 	"Preferito 3",
 	"Preferito 4",
+	"Preferito 5",
+	"Preferito 6",
+	"Preferito 7",
+	"Preferito 8",
+	"Preferito 9",
+	"Preferito 10",
+	"Preferito 11",
+	"Preferito 12",
+	"Preferito 13",
+	"Preferito 14",
+	"Preferito 15",
+	"Preferito 16",
+	"Preferito 17",
+	"Preferito 18",
+	"Preferito 19",
+	"Preferito 20",
 	"Calibrazione",
+	"Impostaz. fabbrica",
 };
 
 enum
@@ -129,7 +163,7 @@ void PreferenceInit()
 // Prima la scelta della categoria, poi la scelta dell'alimento
 bool FoodChoiceMenu() 
 {
-	bool IsCategory = true, IsFood = false; // Se vero selezioni la categoria altrimenti il cibo
+bool IsCategory = true, IsFood = false; // Se vero selezioni la categoria altrimenti il cibo
 	uint8_t Category = 0;
 	uint16_t Food = 0, FoodMaxItem = 0;
 	bool ExitFoodChoice = false, ChoiceComplete = false;
@@ -232,8 +266,50 @@ bool FoodChoiceMenu()
 	}
 	return ChoiceComplete;
 }
+}
 
-void ShowMeasure()
+void ShowNormalMeasure()
+{
+	uint8_t ButtonPress = NO_PRESS;
+	float Weight = 0.0, OldWeight = 0.0;
+	bool ExitShowMeasure = false;
+	char Values[MAX_LCD_CHARS + 1];
+	String WeightStr;
+	ClearLCD();
+	while(!ExitShowMeasure)
+	{
+		LCDPrintString(ONE, CENTER_ALIGN, "Peso letto:");
+		Weight = roundf(GetWeight());
+		if(Weight < 1000)
+			snprintf(Values, MAX_LCD_CHARS, "%6fg", Weight);
+		else
+			snprintf(Values, MAX_LCD_CHARS, "%4.3fkg", Weight / 1000);
+		LCDPrintString(TWO, CENTER_ALIGN, Values);
+		LCDPrintString(FOUR, CENTER_ALIGN, "OK per la tara");
+		CheckEvent();
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
+		{
+			case EXIT:
+				ExitShowMeasure = true;
+				break;
+			case UP:
+			case DOWN:
+				break;
+			case OK_TARE:
+				SetTare();
+				ClearLCD();
+				break;
+			default:
+				break;
+		}
+		OldWeight = Weight;
+		delay(100);
+	}
+}
+
+
+void ShowMeasureCal()
 {
 	uint8_t ButtonPress = NO_PRESS;
 	float Weight = 0.0, OldWeight = 0.0;
@@ -854,7 +930,7 @@ MAIN_FUNCTIONS MenuChoice()
 	uint8_t ArrowPos = 1, OldArrowPos = 1;
 	uint8_t TopItem = 0;
 	bool ExitMenuChoice = false;
-	uint8_t FunctionChoice = BALANCE_FUNCTION, OldFunctionChoice = BALANCE_FUNCTION;
+	uint8_t FunctionChoice = BALANCE_FUNCTION_NORM, OldFunctionChoice = BALANCE_FUNCTION_NORM;
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
 	while(!ExitMenuChoice)
@@ -876,7 +952,7 @@ MAIN_FUNCTIONS MenuChoice()
 		if(Flags.CategoryModified)
 		{
 			Flags.CategoryModified = false;
-			FunctionChoice = BALANCE_FUNCTION;
+			FunctionChoice = BALANCE_FUNCTION_NORM;
 			ExitMenuChoice = true;
 		}
 		ButtonPress = KeyPressed();
@@ -885,7 +961,7 @@ MAIN_FUNCTIONS MenuChoice()
 			case EXIT:
 				break;
 			case UP:
-				if(FunctionChoice > BALANCE_FUNCTION)
+				if(FunctionChoice > BALANCE_FUNCTION_NORM)
 					FunctionChoice--;
 				else
 					FunctionChoice = MAX_FUNCTIONS - 1;
@@ -894,7 +970,7 @@ MAIN_FUNCTIONS MenuChoice()
 				if(FunctionChoice < MAX_FUNCTIONS - 1)
 					FunctionChoice++;
 				else
-					FunctionChoice = BALANCE_FUNCTION;
+					FunctionChoice = BALANCE_FUNCTION_NORM;
 				break;
 			case OK_TARE:
 				ExitMenuChoice = true;

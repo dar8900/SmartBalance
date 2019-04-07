@@ -126,7 +126,7 @@ void BalanceSetup()
 
 void AutoCalibration()
 {
-	uint16_t WeightTarget = 0, OldWeight = 0;;
+uint16_t WeightTarget = 0, OldWeight = 0;;
 	char PrintStr[21];
 	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 1;
 	float CalibrationFactor = 10.0, ReadedWeight = 0.0;

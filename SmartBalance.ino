@@ -24,7 +24,7 @@ SYSTEM_FLAGS Flags;
 void Reboot()
 {
 	ESP.restart();
-}
+
 
 void CheckEvent()
 {
@@ -93,7 +93,7 @@ void setup()
 	LCDPrintString(TWO, CENTER_ALIGN, "Home Microtech");
 	delay(1500);
 	ClearLCD();
-	// Wait(TWO, true);
+	Wait(TWO, true);
 	BalanceSetup();
 	// FillNutritionalTableSizeArray();
 	//WebServerInit();
@@ -107,10 +107,13 @@ void loop()
 	WichFunction = MenuChoice();
 	switch(WichFunction)
 	{
-		case BALANCE_FUNCTION:
+		case BALANCE_FUNCTION_NORM:
+			
+			break;
+		case BALANCE_FUNCTION_CAL:
 			if(FoodChoiceMenu())
 			{
-				ShowMeasure();
+				ShowMeasureCal();
 			}
 			break;
 		case INFO_FUNCTION:
@@ -124,33 +127,110 @@ void loop()
 			break;
 		case PREFERENCE_1_FUNCTION:
 			if(CheckPreference(PREFERENCE_1))
-				ShowMeasure();
+				ShowMeasureCal();
 			break;
 		case PREFERENCE_2_FUNCTION:
 			if(CheckPreference(PREFERENCE_2))
-				ShowMeasure();
+				ShowMeasureCal();
 			break;
 		case PREFERENCE_3_FUNCTION:
 			if(CheckPreference(PREFERENCE_3))
-				ShowMeasure();
+				ShowMeasureCal();
 			break;
 		case PREFERENCE_4_FUNCTION:
 			if(CheckPreference(PREFERENCE_4))
-				ShowMeasure();
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_5_FUNCTION:
+			if(CheckPreference(PREFERENCE_5))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_6_FUNCTION:
+			if(CheckPreference(PREFERENCE_6))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_7_FUNCTION:
+			if(CheckPreference(PREFERENCE_7))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_8_FUNCTION:
+			if(CheckPreference(PREFERENCE_8))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_9_FUNCTION:
+			if(CheckPreference(PREFERENCE_9))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_10_FUNCTION:
+			if(CheckPreference(PREFERENCE_10))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_11_FUNCTION:
+			if(CheckPreference(PREFERENCE_11))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_12_FUNCTION:
+			if(CheckPreference(PREFERENCE_12))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_13_FUNCTION:
+			if(CheckPreference(PREFERENCE_13))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_14_FUNCTION:
+			if(CheckPreference(PREFERENCE_14))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_15_FUNCTION:
+			if(CheckPreference(PREFERENCE_15))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_16_FUNCTION:
+			if(CheckPreference(PREFERENCE_16))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_17_FUNCTION:
+			if(CheckPreference(PREFERENCE_17))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_18_FUNCTION:
+			if(CheckPreference(PREFERENCE_18))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_19_FUNCTION:
+			if(CheckPreference(PREFERENCE_19))
+				ShowMeasureCal();
+			break;
+		case PREFERENCE_20_FUNCTION:
+			if(CheckPreference(PREFERENCE_20))
+				ShowMeasureCal();
 			break;
 		case CALIBRATION_FUNCTION:
-			EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
-			ClearLCD();
-			LCDPrintString(ONE, CENTER_ALIGN, "Passaggio alla");
-			LCDPrintString(TWO, CENTER_ALIGN, "calibrazione");
-			delay(1000);
-			ClearLCD();
-			LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
-			EEPROM.commit();
-			delay(1000);
-			ClearLCD();
-			delay(1000);			
-			Reboot();
+			{
+				EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
+				ClearLCD();
+				LCDPrintString(ONE, CENTER_ALIGN, "Passaggio alla");
+				LCDPrintString(TWO, CENTER_ALIGN, "calibrazione");
+				delay(1000);
+				ClearLCD();
+				LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
+				EEPROM.commit();
+				delay(1000);			
+				ESP.restart();	
+			}
+		case RESET_DEFAULT:
+			{
+				EEPROM.write(CALIBRATION_MODE_ADDR, 255);
+				ClearLCD();
+				LCDPrintString(ONE, CENTER_ALIGN, "Reset a");
+				LCDPrintString(TWO, CENTER_ALIGN, "default");
+				delay(1000);
+				ClearLCD();	
+				LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
+				EEPROM.commit();
+				delay(1000);
+				ESP.restart();	
+			}			
 		default:
 			break;		
 	}
