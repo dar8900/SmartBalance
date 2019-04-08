@@ -77,51 +77,6 @@ void BalanceSetup()
 	}	
 }
 
-// void Calibration()
-// {
-	// float calibration_factor = 500; // this calibration factor is adjusted according to my load cell
-	// scale.set_scale();
-	// scale.tare(); //Reset the scale to 0
-	// String ValueUnit;
-	// long zero_factor = scale.read_average();
-	// uint8_t ButtonPress = NO_PRESS;
-	// bool ExitCalibration = false;
-	// ClearLCD();
-	// while(!ExitCalibration)
-	// {
-		// scale.set_scale(calibration_factor); //Adjust to this calibration factor
-		// LCDPrintString(TWO, LEFT_ALIGN, "Peso:");
-		// ValueUnit = String(scale.get_units(10), 3) + "g";
-		// LCDPrintString(TWO, RIGHT_ALIGN, ValueUnit);
-		// LCDPrintString(THREE, LEFT_ALIGN, "K fact:");
-		// LCDPrintString(THREE, RIGHT_ALIGN, String(calibration_factor, 4));
-		// ButtonPress = KeyPressed();
-		// switch(ButtonPress)
-		// {
-			// case UP:
-				// calibration_factor -= 1;
-				// ClearLCD();
-				// break;
-			// case DOWN:
-				// calibration_factor += 1;
-				// ClearLCD();
-				// break;
-			// case OK_TARE:
-				// calibration_factor += 10;
-				// ClearLCD();				
-				// break;
-			// case EXIT:
-				// ExitCalibration = true;
-				// EEPROM.put(CALIBRATION_ADDR, calibration_factor);
-				// EEPROM.commit();
-				// break;
-			// default:
-				// break;		
-		// }
-		// yield();
-	// }
-// }
-
 // IL CELLULARE CON LA COVER PESA 208g
 
 void AutoCalibration()
@@ -261,7 +216,7 @@ uint16_t WeightTarget = 0, OldWeight = 0;;
 
 		LCDPrintString(TWO, LEFT_ALIGN, "Letto:");
 		LCDPrintString(TWO, RIGHT_ALIGN, "Target:");
-		snprintf(PrintStr, 20, "%8.0fg", ReadedWeight);
+		snprintf(PrintStr, 20, "%6.0fg", ReadedWeight);
 		LCDPrintString(THREE, LEFT_ALIGN, PrintStr);
 		snprintf(PrintStr, 20, "%dg", WeightTarget);
 		LCDPrintString(THREE, RIGHT_ALIGN, PrintStr);
