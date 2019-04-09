@@ -220,7 +220,7 @@ void loop()
 			}
 		case RESET_DEFAULT:
 			{
-				EEPROM.write(CALIBRATION_MODE_ADDR, 255);
+				EEPROM.write(CALIBRATION_MODE_ADDR, RESET_DEFAULT_MODE);
 				ClearLCD();
 				LCDPrintString(ONE, CENTER_ALIGN, "Reset a");
 				LCDPrintString(TWO, CENTER_ALIGN, "default");
