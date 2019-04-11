@@ -75,7 +75,7 @@ typedef enum
 	PREFERENCE_17,
 	PREFERENCE_18,
 	PREFERENCE_19,
-	PREFERENCE_20,
+	PREFERENCE_
 
 	MAX_PREFERENCE
 }PREFERENCE_NUMBER;
@@ -86,7 +86,7 @@ extern uint8_t DownArrow[];
 extern uint8_t ToRightArrow[];
 extern uint8_t ToLeftArrow[];
 
-extern uint8_t  CategoryChoice;
+extern uint8_t  CategoryChoice;20,
 extern uint16_t  FoodChoice;
 extern MAIN_FUNCTIONS WichFunction;
 
@@ -101,4 +101,6 @@ void ShowInfo(void);
 MAIN_FUNCTIONS MenuChoice(void);
 bool CheckPreference(uint8_t PreferenceChoice);
 bool CheckYesNo(void);
+void ToCalibration(void);
+void ResetDefault(void);
 #endif

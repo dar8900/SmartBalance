@@ -207,29 +207,11 @@ void loop()
 			break;
 		case CALIBRATION_FUNCTION:
 			{
-				EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
-				ClearLCD();
-				LCDPrintString(ONE, CENTER_ALIGN, "Passaggio alla");
-				LCDPrintString(TWO, CENTER_ALIGN, "calibrazione");
-				delay(1000);
-				ClearLCD();
-				LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
-				EEPROM.commit();
-				delay(1000);			
-				ESP.restart();	
+				ToCalibration();
 			}
 		case RESET_DEFAULT:
 			{
-				EEPROM.write(CALIBRATION_MODE_ADDR, RESET_DEFAULT_MODE);
-				ClearLCD();
-				LCDPrintString(ONE, CENTER_ALIGN, "Reset a");
-				LCDPrintString(TWO, CENTER_ALIGN, "default");
-				delay(1000);
-				ClearLCD();	
-				LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
-				EEPROM.commit();
-				delay(1000);
-				ESP.restart();	
+				ResetDefault();
 			}			
 		default:
 			break;		
