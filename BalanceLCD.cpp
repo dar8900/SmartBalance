@@ -1117,7 +1117,7 @@ bool CheckYesNo()
 
 void ToCalibration()
 {
-	EPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
+	EEPROM.write(CALIBRATION_MODE_ADDR, CALIBRATION_MODE);
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Passaggio alla");
 	LCDPrintString(TWO, CENTER_ALIGN, "calibrazione");
