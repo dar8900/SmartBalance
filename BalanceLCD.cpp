@@ -7,8 +7,8 @@
 #include "EepromAddr.h"
 #include <EEPROM.h>
 
-#define MAX_LCD_LINE_MENU 3
-
+#define MAX_LCD_LINE_MENU       3
+#define INACTIVITY_DELAY	30000
 
 PREFERENCE_TYPE FoodPreference[MAX_PREFERENCE] = 
 {
@@ -147,6 +147,48 @@ const char *MacrosName[] =
 	"Proteine",
 	"Grassi",
 };
+
+static uint32_t InactivityTimer = 0;
+
+static void ManageInactivity(bool RefreshTimer)
+{
+	bool TurnOffLcd = false, First = false;
+	uint8_t ButtonPress = NO_PRESS;
+	if(RefreshTimer)
+		InactivityTimer = 0;
+	if(InactivityTimer == 0)
+		InactivityTimer = millis();
+	if((millis() - InactivityTimer) >= INACTIVITY_DELAY)
+	{
+		InactivityTimer = 0;
+		TurnOffLcd = true;
+		First = true;
+	}
+	
+	while(TurnOffLcd)
+	{
+		if(First)
+		{
+			ClearLCD();
+			LCDDisplayLight(false);
+			First = false;
+		}
+		ButtonPress = KeyPressed();
+		switch(ButtonPress)
+		{
+			case UP:
+			case DOWN:
+			case OK_TARE:
+				TurnOffLcd = false;
+				LCDDisplayLight(true);
+				break;
+			default:
+				break;
+		}
+		delay(5);
+	}
+}
+
 
 void PreferenceInit()
 {
@@ -934,7 +976,7 @@ MAIN_FUNCTIONS MenuChoice()
 	uint8_t ButtonPress = NO_PRESS;
 	uint8_t ArrowPos = 1, OldArrowPos = 1;
 	uint8_t TopItem = 0;
-	bool ExitMenuChoice = false;
+	bool ExitMenuChoice = false, RefreshTimer = true;
 	uint8_t FunctionChoice = BALANCE_FUNCTION_NORM, OldFunctionChoice = BALANCE_FUNCTION_NORM;
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
@@ -949,6 +991,9 @@ MAIN_FUNCTIONS MenuChoice()
 			// LCDPrintString(TWO + MenuIndx, AFTER_ARROW_POS, MenuTitle[Aux]);
 			// // delay(10);
 		// }
+		ManageInactivity(RefreshTimer);
+		if(RefreshTimer)
+			RefreshTimer = false;
 		LCDPrintString(ONE, CENTER_ALIGN, "Scegli la funzione");
 		RefreshMenuChoice(MenuTitle, MAX_FUNCTIONS, ArrowPos, TopItem);
 		LCDShowIcon(TO_RIGHT_ARROW, ArrowPos, 0);
