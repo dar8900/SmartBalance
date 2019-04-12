@@ -8,7 +8,7 @@
 #include <EEPROM.h>
 
 #define MAX_LCD_LINE_MENU       3
-#define INACTIVITY_DELAY	30000
+#define INACTIVITY_DELAY	   30
 
 PREFERENCE_TYPE FoodPreference[MAX_PREFERENCE] = 
 {
@@ -154,17 +154,11 @@ static void ManageInactivity(bool RefreshTimer)
 {
 	bool TurnOffLcd = false, First = false;
 	uint8_t ButtonPress = NO_PRESS;
-	if(RefreshTimer)
-		InactivityTimer = 0;
-	if(InactivityTimer == 0)
-		InactivityTimer = millis();
-	if((millis() - InactivityTimer) >= INACTIVITY_DELAY)
+	if(TimerDelayCounter(&InactivityTimer, INACTIVITY_DELAY, RefreshTimer))
 	{
-		InactivityTimer = 0;
 		TurnOffLcd = true;
 		First = true;
 	}
-	
 	while(TurnOffLcd)
 	{
 		if(First)
@@ -364,7 +358,7 @@ void ShowMeasureCal()
 	uint16_t Carbs = 0, Protein = 0, Fats = 0;
 	bool ExitShowMeasure = false;
 	char Values[MAX_LCD_CHARS + 1];
-	uint8_t RefreshCnt = 35;
+	uint32_t RefreshCnt = 0;
 	ClearLCD();
 	while(!ExitShowMeasure)
 	{
@@ -431,12 +425,8 @@ void ShowMeasureCal()
 			default:
 				break;
 		}
-		RefreshCnt--;
-		if(RefreshCnt == 0)
-		{
-			RefreshCnt = 35;
-			ClearLCD();			
-		}
+		if(TimerDelayCounter(&RefreshCnt, 5, false))
+			ClearLCD();
 		delay(100);
 	}
 }
@@ -602,12 +592,15 @@ void LaunchMenu()
 	uint8_t ButtonPress = NO_PRESS;
 	uint8_t ArrowPos = 1, OldArrowPos = 1;
 	uint8_t TopItem = 0;
-	bool ExitLaunchMenuChoice = false, ShowFunc = false;
+	bool ExitLaunchMenuChoice = false, ShowFunc = false, RefreshTimer = true;
 	uint8_t FunctionChoice = 0;
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Scegli il calcolo");
 	while(!ExitLaunchMenuChoice)
 	{
+		ManageInactivity(RefreshTimer);
+		if(RefreshTimer)
+			RefreshTimer = false;
 		RefreshMenuChoice(LaunchMenuStr, MAX_LAUNCH_CHOICE, ArrowPos, TopItem);
 		CheckEvent();
 		ButtonPress = KeyPressed();
@@ -803,6 +796,7 @@ void CompleteLaunchMacros()
 		{
 			ShowMeasureCal();
 			ClearLCD();
+			Diff = MacrosTarget - MacrosReached;
 			LCDPrintString(ONE, CENTER_ALIGN, "Grammi rimanenti:");
 			snprintf(MacrosStr, MAX_LCD_CHARS, "%dg", Diff);
 			LCDPrintString(TWO, CENTER_ALIGN, MacrosStr);
@@ -936,6 +930,7 @@ void CompleteLaunchCalories()
 		{
 			ShowMeasureCal();
 			ClearLCD();
+			Diff = CaloriesTarget - CaloriesReached;
 			LCDPrintString(ONE, CENTER_ALIGN, "Calorie rimanenti:");
 			snprintf(MacrosStr, MAX_LCD_CHARS, "%dkcal", Diff);
 			LCDPrintString(TWO, CENTER_ALIGN, MacrosStr);

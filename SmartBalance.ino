@@ -26,6 +26,21 @@ void Reboot()
 	ESP.restart();
 }
 
+bool TimerDelayCounter(uint32_t *Cnt, uint16_t Delay, bool ResetCounter)
+{
+	if(ResetCounter)
+		*Cnt = 0;
+	if(*Cnt == 0)
+		*Cnt = millis();
+	if((millis() - *Cnt) >= (Delay * 1000))
+	{
+		*Cnt = 0;
+		return true;
+	}
+	else
+		return false;
+}
+
 void CheckEvent()
 {
 	// if(client.connected())

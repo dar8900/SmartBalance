@@ -38,7 +38,7 @@ void BalanceSetup()
 		}	
 		LCDPrintString(ONE, CENTER_ALIGN, "Inizializzo la");
 		LCDPrintString(TWO, CENTER_ALIGN, "bilancia, attendere");
-		delay(1000);
+		delay(1500);
 		ClearLCD();
 		LCDPrintString(TWO, CENTER_ALIGN, "Riavvio in corso");
 		EEPROM.commit();
@@ -81,11 +81,11 @@ void BalanceSetup()
 
 void AutoCalibration()
 {
-uint16_t WeightTarget = 0, OldWeight = 0;;
+	uint16_t WeightTarget = 0, OldWeight = 0;;
 	char PrintStr[21];
 	uint8_t ButtonPress = NO_PRESS, PointPos = 0, TimerPoint = 1;
 	float CalibrationFactor = 10.0, ReadedWeight = 0.0;
-	bool ExitSetWeightTarget = false, ToggleValueView = false;
+	bool ExitSetWeightTarget = false, AutoCalibrationDone = false;
 	uint16_t TimeExec = 0;
 	ClearLCD();
 	while(!ExitSetWeightTarget)
@@ -94,7 +94,7 @@ uint16_t WeightTarget = 0, OldWeight = 0;;
 		LCDPrintString(TWO, CENTER_ALIGN, "peso target:");
 		snprintf(PrintStr, 20, "%dg", WeightTarget);
 		LCDPrintString(THREE, CENTER_ALIGN, PrintStr);
-		LCDPrintString(FOUR, CENTER_ALIGN, "Premere su, giu, ok");
+		LCDPrintString(FOUR, CENTER_ALIGN, "Exit per +100");
 		ButtonPress = KeyPressed();
 		switch(ButtonPress)
 		{
@@ -124,6 +124,15 @@ uint16_t WeightTarget = 0, OldWeight = 0;;
 				ExitSetWeightTarget = true;
 				break;
 			case EXIT:
+				if(WeightTarget < 5000)
+					WeightTarget += 100;
+				else
+					WeightTarget = 0;
+				if(OldWeight >= 1000 && WeightTarget < 1000)
+				{
+					ClearLCDLine(THREE);
+					OldWeight = WeightTarget;
+				}				
 				break;
 			default:
 				break;		
@@ -134,6 +143,7 @@ uint16_t WeightTarget = 0, OldWeight = 0;;
 	}
 	ClearLCD();
 	ButtonPress = NO_PRESS;
+	delay(500);
 	LCDPrintString(ONE, CENTER_ALIGN, "Lasciare la bilancia");
 	LCDPrintString(TWO, CENTER_ALIGN, "vuota e");
 	Wait(THREE, false);
@@ -149,7 +159,7 @@ uint16_t WeightTarget = 0, OldWeight = 0;;
 	ClearLCD();
 	LCDPrintString(ONE, CENTER_ALIGN, "Sto calibrando");
 	float OldCalibrationF = 0.0;
-	while(1)
+	while(!AutoCalibrationDone)
 	{
 		if(CalibrationFactor != OldCalibrationF)
 		{
@@ -212,7 +222,7 @@ uint16_t WeightTarget = 0, OldWeight = 0;;
 			}
 		}
 		else if(ReadedWeight == (float)WeightTarget)
-			break;
+			AutoCalibrationDone = true;
 
 		LCDPrintString(TWO, LEFT_ALIGN, "Letto:");
 		LCDPrintString(TWO, RIGHT_ALIGN, "Target:");

@@ -28,6 +28,7 @@ typedef struct
 
 extern SYSTEM_FLAGS Flags;
 
+bool TimerDelayCounter(uint32_t *Cnt, uint16_t Delay, bool ResetCounter);
 void Reboot(void);
 void CheckEvent(void);
 void Wait(uint8_t Row, bool Clear);
