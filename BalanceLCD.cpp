@@ -8,7 +8,7 @@
 #include <EEPROM.h>
 
 #define MAX_LCD_LINE_MENU       3
-#define INACTIVITY_DELAY	   30
+#define INACTIVITY_DELAY	   90
 
 PREFERENCE_TYPE FoodPreference[MAX_PREFERENCE] = 
 {
@@ -173,6 +173,7 @@ static void ManageInactivity(bool RefreshTimer)
 			case UP:
 			case DOWN:
 			case OK_TARE:
+			case EXIT:
 				TurnOffLcd = false;
 				LCDDisplayLight(true);
 				break;
